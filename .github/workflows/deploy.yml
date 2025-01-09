@@ -8,24 +8,26 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+
+        permissions:
+          id-token: write # Needed for auth with Deno Deploy
+          contents: read # Needed to clone the repository
+
         steps:
         - name: Checkout Repository
           uses: actions/checkout@v4
 
         - name: Setup Deno environment
           uses: denoland/setup-deno@v2
+          with:
+            deno-version: v2.1.4
   
         - name: Build site
           run: deno task build
-  
-        - name: Setup Pages
-          uses: actions/configure-pages@v5
-  
-        - name: Upload artifact
-          uses: actions/upload-pages-artifact@v3
+
+        - name: Upload to Deno Deploy
+          uses: denoland/deployctl@v1
           with:
-            path: "_site"
-  
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v4
+            project: "cp-readme-stats"
+            entrypoint: "api/main.ts"
+            root: "."

@@ -16,7 +16,7 @@ RUN deno cache api/main.ts
 # Warmup caches
 RUN timeout 10s deno -A api/main.ts || [ $? -eq 124 ] || exit 1
 
-CMD ["deno", "task", "dev"]
+CMD ["deno", "task", "build"]
 
 #docker build -t deno-readme-stats .
 #docker run -it -p 8000:8000 deno-readme-stats
