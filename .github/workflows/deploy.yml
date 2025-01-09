@@ -22,8 +22,8 @@ jobs:
           with:
             deno-version: v2.1.4
   
-        - name: Build site
-          run: deno task build
+        - name: Check site
+          run: deno check api/main.ts
 
         - name: Upload to Deno Deploy
           uses: denoland/deployctl@v1
