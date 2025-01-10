@@ -107,30 +107,5 @@ export abstract class Card {
             />
             </svg>
         `;
-
-//         return `
-// <svg version="1.1" 
-//     viewBox="0 0 ${this.width} ${this.height}"
-//     xmlns="http://www.w3.org/2000/svg"
-//     ${typeof this.width === "number" ? `width="${this.width}"` : ""}
-//     ${typeof this.height === "number" ? `height="${this.height}"` : ""}
-// >
-//     <foreignObject width="${this.width}" height="${this.height}" requiredExtensions="http://www.w3.org/1999/xhtml">
-//         <body id="svg-body" xmlns="http://www.w3.org/1999/xhtml">
-//             <div id="card">
-//                 <div id="card-body">
-//                     <div id="title-container">
-//                         ${this.renderTitle()}
-//                     </div>
-//                     <div id="body-container">
-//                         ${this.renderBody()}
-//                     </div>
-//                 </div>
-//             </div>
-//             <style id="main-style">${style}</style>
-//         </body>
-//     </foreignObject>
-// </svg>
-//         `;
     }
 }
