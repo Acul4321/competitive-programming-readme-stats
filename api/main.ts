@@ -19,7 +19,7 @@ router.get("/:platform/:type/:username", (ctx) => {
 
   let service: Service;
   let type : Card;
-  
+
   //validate platform
   switch(ctx.params.platform) {
     case "atcoder": {
@@ -41,16 +41,25 @@ router.get("/:platform/:type/:username", (ctx) => {
   ctx.response.body = Object.fromEntries(queryParam);
   
   //optional perameters setting
-  const theme = queryParam.get('theme');
-  const selectedTheme = theme in themes ? themes[theme] : themes["default"];
-  const width = queryParam.get('width') ?? 100;
-  const height = queryParam.get('height') ?? 100;
-  const border_radius = queryParam.get('border_radius') ?? 4.5;
+  const theme = queryParam.get('theme') as keyof typeof themes ?? "default";
+  let selectedTheme;
+  let hide_border = queryParam.get('border_radius') === 'true';
+  if (theme in themes){
+    selectedTheme = { ...themes[theme], border_color: "e4e2e2" }
+    if(hide_border == undefined){
+      hide_border = true;
+    }
+  } else {
+    selectedTheme = themes["default"];
+  }
+  const width: number = parseInt(queryParam.get('width') ?? '100');
+  const height: number = parseInt(queryParam.get('height') ?? '100');
+  const border_radius: number = parseFloat(queryParam.get('border_radius') ?? '4.5');
 
   //validate type
   switch(ctx.params.type) {
     case "stats": {
-      type = new Stats("Acul4321", 42400, 181, 181, 0,selectedTheme);
+      type = new Stats("Acul4321", 42400, 181, 181, 0,selectedTheme, hide_border, width, height, border_radius);
       break;
     }
     default: {
