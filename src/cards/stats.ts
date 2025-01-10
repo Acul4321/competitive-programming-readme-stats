@@ -1,5 +1,6 @@
 import { Card } from './card.ts';
 import { themes } from "../../themes/themes.ts";
+import { formatDate } from "../utils.ts";
 
 export class Stats extends Card {
     protected renderTitle(): string {
@@ -16,7 +17,7 @@ export class Stats extends Card {
                 <h3 style="color: ${this.theme.text_color};">Rating: ${this.rating}</h3>
                 <h3 style="color: ${this.theme.text_color};">Max Rating: ${this.maxRating}</h3>
                 <h3 style="color: ${this.theme.text_color};">Rated Matches: ${this.rated_matches}</h3>
-                <h3 style="color: ${this.theme.text_color};">Last Competed: ${this.last_competed.toISOString().split('T')[0].replace(/-/g, '/')}</h3>
+                <h3 style="color: ${this.theme.text_color};">Last Competed: ${formatDate(this.last_competed)}</h3>
             </div>
         `;
     }
