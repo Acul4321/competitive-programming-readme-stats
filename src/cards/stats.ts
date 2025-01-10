@@ -26,10 +26,10 @@ export class Stats extends Card {
         private maxRating: number,
         private minRating: number,
         theme = themes["default"],
+        hide_border: boolean = false,
         width: number = 100,
         height: number = 100,
-        border_radius: number = 4.5,
-        hide_border: boolean = false
+        border_radius: number = 4.5
     ) {
         super(width, height, border_radius, theme, hide_border);
     }
