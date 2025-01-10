@@ -5,6 +5,10 @@ export abstract class Service {
     constructor(url: string) {
         this.service_url = url;
     }
+
+    abstract fetchProfile(url: string): Profile;
+    abstract fetchCompetitionHistory(url: string): Competition[];
+
 }
 
 export class Profile {
