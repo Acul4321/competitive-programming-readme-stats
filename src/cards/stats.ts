@@ -15,7 +15,8 @@ export class Stats extends Card {
                 <h3 style="color: ${this.theme.text_color};">Rank: ${this.rank}</h3>
                 <h3 style="color: ${this.theme.text_color};">Rating: ${this.rating}</h3>
                 <h3 style="color: ${this.theme.text_color};">Max Rating: ${this.maxRating}</h3>
-                <h3 style="color: ${this.theme.text_color};">Min Rating: ${this.minRating}</h3>
+                <h3 style="color: ${this.theme.text_color};">Rated Matches: ${this.rated_matches}</h3>
+                <h3 style="color: ${this.theme.text_color};">Last Competed: ${this.last_competed.toISOString().split('T')[0].replace(/-/g, '/')}</h3>
             </div>
         `;
     }
@@ -24,7 +25,8 @@ export class Stats extends Card {
         private rank: number,
         private rating: number,
         private maxRating: number,
-        private minRating: number,
+        private rated_matches: number,
+        private last_competed: Date,
         theme = themes["default"],
         hide_border: boolean = false,
         width: number = 100,

@@ -1,13 +1,21 @@
-export abstract class Service {
-    protected service_url: string;
-    protected profile: Profile = new Profile('');
+export abstract class Platform {
+    protected platform_url: string;
+    public profile: Profile = new Profile('');
 
     constructor(url: string) {
-        this.service_url = url;
+        this.platform_url = url;
+    }
+    getUserURL(username: string): string {
+        return this.platform_url + username;
     }
 
-    abstract fetchProfile(url: string): Profile;
-    abstract fetchCompetitionHistory(url: string): Competition[];
+    async getSourceHTML(username: string): Promise<string> {
+        const response = (await fetch(this.getUserURL(username)));
+        return response.text();
+    }
+
+    abstract fetchProfile(username: string): Promise<Profile>;
+    abstract fetchCompetitionHistory(url: string): Promise<Competition[]>;
 
 }
 
@@ -34,6 +42,26 @@ export class Profile {
         this.highest_rating = highest_rating;
         this.rated_matches = rated_matches;
         this.last_competed = last_competed;
+    }
+
+    // Getters
+    getId(): string {
+        return this.id;
+    }
+    getRank(): number {
+        return this.rank ?? -1;
+    }
+    getRating(): number {
+        return this.rating ?? -1;
+    }
+    getHighestRating(): number {
+        return this.highest_rating ?? -1;
+    }
+    getRatedMatches(): number {
+        return this.rated_matches ?? -1;
+    }
+    getLastCompeted(): Date {
+        return this.last_competed ?? new Date();
     }
 }
 

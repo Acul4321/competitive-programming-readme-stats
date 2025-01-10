@@ -2,8 +2,8 @@ import { Application, Router } from "@oak/oak";
 import { oakCors } from "@tajpouria/cors";
 import { themes } from "../themes/themes.ts";
 
-import { Atcoder } from "../src/service/atcoder.ts";  
-import { Service } from "../src/service/service.ts";
+import { Atcoder } from "../src/platform/atcoder.ts";  
+import { Platform } from "../src/platform/platform.ts";
 import { Card } from "../src/cards/card.ts";
 import { Stats } from "../src/cards/stats.ts";
 
@@ -14,16 +14,16 @@ router.get("/", (ctx) => {
   ctx.response.body = 'Welcome to The Competitive Programming Readme Stats \nThe Supported Platforms Include: \natcoder \n \nThe Types of Cards are:\nstats \n \nThe Command Structure is:\n/{platform}/{type}/{username}?{optionalPeram}'
 })
 
-router.get("/:platform/:type/:username", (ctx) => {
+router.get("/:platform/:type/:username", async (ctx) => {
   ctx.response.type = "image/svg+xml";  // Set content type for SVG
 
-  let service: Service;
+  let platform: Platform;
   let type : Card;
 
   //validate platform
   switch(ctx.params.platform) {
     case "atcoder": {
-      service = new Atcoder();
+      platform = new Atcoder();
       break;
     }
     default: {
@@ -32,6 +32,7 @@ router.get("/:platform/:type/:username", (ctx) => {
     }
   }
   //validate username
+  platform.profile = await platform.fetchProfile(ctx.params.username)
 
   // parse optional perameters
   const queryParam = new Map<string, string>();
@@ -59,7 +60,18 @@ router.get("/:platform/:type/:username", (ctx) => {
   //validate type
   switch(ctx.params.type) {
     case "stats": {
-      type = new Stats("Acul4321", 42400, 181, 181, 0,selectedTheme, hide_border, width, height, border_radius);
+      type = new Stats(
+        platform.profile.getId(), 
+        platform.profile.getRank(), 
+        platform.profile.getRating(), 
+        platform.profile.getHighestRating(), 
+        platform.profile.getRatedMatches(),
+        platform.profile.getLastCompeted(),
+        selectedTheme, 
+        hide_border, 
+        width, 
+        height, 
+        border_radius);
       break;
     }
     default: {
