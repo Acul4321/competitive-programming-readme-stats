@@ -1,5 +1,6 @@
 import { Application, Router } from "@oak/oak";
 import { oakCors } from "@tajpouria/cors";
+import { themes } from "../themes/themes.ts";
 
 const PORT:string = Deno.env.get("SERVER_PORT") ?? "8000";
 const router = new Router();
@@ -38,15 +39,16 @@ router.get("/:platform/:type/:username", (ctx) => {
   ctx.request.url.searchParams.forEach((v, k) => {
     queryParam.set(k, v);
   });
-
-  
   ctx.response.body = Object.fromEntries(queryParam);
   
-  //loop through the optional query parameters
-  for (const key of queryParam.keys()) {
-    console.log(`Key: ${key}, Value: ${queryParam.get(key)}`);
-  }
-})
+  //optional perameters setting
+  const theme = queryParam.get('theme');
+  const selectedTheme = theme in themes ? themes[theme] : themes["default"];
+  // const width = queryParam.get('width') ?? 100;
+  // const height = queryParam.get('height') ?? 100;
+  
+  ctx.response.body = { ...Object.fromEntries(queryParam), theme: selectedTheme};
+});
 
 const app = new Application();
 app.use(oakCors());
