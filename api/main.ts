@@ -39,7 +39,6 @@ router.get("/:platform/:type/:username", async (ctx) => {
   ctx.request.url.searchParams.forEach((v, k) => {
     queryParam.set(k, v);
   });
-  ctx.response.body = Object.fromEntries(queryParam);
   
   //optional perameters setting
   const theme = queryParam.get('theme') as keyof typeof themes ?? "default";
@@ -53,9 +52,9 @@ router.get("/:platform/:type/:username", async (ctx) => {
   } else {
     selectedTheme = themes["default"];
   }
-  const width: number = parseInt(queryParam.get('width') ?? '100');
-  const height: number = parseInt(queryParam.get('height') ?? '100');
-  const border_radius: number = parseFloat(queryParam.get('border_radius') ?? '4.5');
+  const width: number = parseInt(queryParam.get('width') ?? 'undifined');
+  const height: number = parseInt(queryParam.get('height') ?? 'undifined');
+  const border_radius: number = parseFloat(queryParam.get('border_radius') ?? 'undefined');
 
   //validate type
   switch(ctx.params.type) {
@@ -80,8 +79,7 @@ router.get("/:platform/:type/:username", async (ctx) => {
     }
   }
 
-  
-  //ctx.response.body = { ...Object.fromEntries(queryParam), theme: selectedTheme};
+  //render the card
   ctx.response.body = type.render();
 });
 
