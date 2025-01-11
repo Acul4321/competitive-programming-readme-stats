@@ -32,29 +32,7 @@ router.get("/", (ctx) => {
 router.get("/:platform/:type/:username", async (ctx) => {
   ctx.response.type = "image/svg+xml";  // Set content type for SVG
   
-  // parse optional perameters
-  const queryParam = new Map<string, string>();
-  ctx.request.url.searchParams.forEach((v, k) => {
-    queryParam.set(k, v);
-  });
-  
-  //optional perameters setting
-  const them = queryParam.get('theme') as keyof typeof themes ?? "default";
-  let hide_border = queryParam.get('border_radius') === 'true';
-  if (them in themes){
-    theme = { ...themes[them], border_color: "e4e2e2" }
-    if ('border_color' in themes[them]) {
-      theme.border_color = (themes[them] as Theme).border_color;
-    }
-    if(hide_border == undefined){
-      hide_border = true;
-    }
-  } else {
-    theme = { ...themes["default"], border_color: themes["default"].border_color ?? "e4e2e2" };
-  }
-  const width: number = parseInt(queryParam.get('width') ?? 'undifined');
-  const height: number = parseInt(queryParam.get('height') ?? 'undifined');
-  const border_radius: number = parseFloat(queryParam.get('border_radius') ?? 'undefined');
+  optionalQueryParams(ctx.request.url);
 
   //validate platform
   platform = validatePlatform(ctx.params.platform);
@@ -102,6 +80,7 @@ function validateType(type: string): Card {
         platform.profile.getRatedMatches(),
         platform.profile.getLastCompeted(),
         theme, 
+        show_icons,
         hide_border, 
         width, 
         height, 
@@ -111,4 +90,28 @@ function validateType(type: string): Card {
       throw new Error("Card type not supported");
     }
   }
+}
+
+function optionalQueryParams(url: URL): void {
+  // parse optional perameters
+  const queryParam = new Map<string, string>();
+  url.searchParams.forEach((v, k) => {
+    queryParam.set(k, v);
+  });
+  
+  //set optional perameters
+  const th = queryParam.get('theme') as keyof typeof themes ?? "default";
+  if (th in themes){
+    theme = { ...themes[th], border_color: (themes[th] as Theme).border_color ?? "e4e2e2" };
+  } else {
+    theme = themes["default"];
+  }
+
+  width = parseInt(queryParam.get('width') ?? '-1');
+  height = parseInt(queryParam.get('height') ?? '-1');
+  border_radius = parseFloat(queryParam.get('border_radius') ?? '-1');
+  show_icons = queryParam.get('show_icons') === 'false' ? false : true;
+  hide_border = queryParam.get('hide_border') === 'true' ? true : false;
+
+  console.log(theme, width, height, border_radius, show_icons, hide_border);
 }

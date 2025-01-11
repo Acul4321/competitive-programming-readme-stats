@@ -80,12 +80,13 @@ export class Stats extends Card {
         private rated_matches: number,
         private last_competed: Date,
         theme = themes["default"],
+        show_icons: boolean = true,
         hide_border: boolean = false,
         width: number = 450,
         height: number = 200,
         border_radius: number = 4.5
     ) {
-        super(width, height, border_radius, theme, hide_border);
+        super(width, height, theme,show_icons,border_radius, hide_border);
     }
 
     protected override Style(): string {

@@ -1,23 +1,26 @@
-import { themes } from "../../themes/themes.ts";
+import { themes,Theme } from "../../themes/themes.ts";
 export abstract class Card {
     protected width: number;
     protected height: number;
+    protected theme: Theme;
+    protected show_icons: boolean;
     protected border_radius: number;
-    protected theme;
     protected hide_border: boolean;
 
     constructor(
         width: number = 100,
         height: number= 100,
-        border_radius: number = 4.5,
         theme = themes["default"],
+        show_icons: boolean = true,
+        border_radius: number = 4.5,
         hide_border: boolean = false
 
     ) {
         this.width = width;
         this.height = height;
-        this.border_radius = border_radius;
         this.theme = theme;
+        this.show_icons = show_icons;
+        this.border_radius = border_radius;
         this.hide_border = hide_border;
     }
 
