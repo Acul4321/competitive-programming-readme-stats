@@ -26,7 +26,6 @@ export abstract class Card {
 
     protected abstract renderTitle(): string;
     protected abstract renderBody(): string;
-    protected abstract calcDimensions():void;
 
     protected Style(): string {
         return "";

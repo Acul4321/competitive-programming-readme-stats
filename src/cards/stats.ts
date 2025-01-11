@@ -1,15 +1,33 @@
 import { Card } from './card.ts';
-import { themes } from "../../themes/themes.ts";
+import { themes,Theme } from "../../themes/themes.ts";
 import { formatDate } from "../utils.ts";
 
 export class Stats extends Card {
-    protected override calcDimensions() {
-        if(isNaN(this.width)){
-            this.width = 450;
+    constructor(
+        private title: string,
+        private rank: number,
+        private rating: number,
+        private max_rating: number,
+        private rated_matches: number,
+        private last_competed: Date,
+        theme:Theme = themes["default"],
+        show_icons: boolean = true,
+        hide_border: boolean = false,
+        width: number = 450,
+        height: number = 200,
+        border_radius: number = 4.5
+    ) {
+        //dimention validation
+        if(width == -1){
+            width = 450;
         }
-        if(isNaN(this.height)){
-            this.height = 200;
+        if(height == -1){
+            height = 200;
         }
+        if(border_radius == -1){
+            border_radius = 4.5;
+        }
+        super(width, height, theme,show_icons,border_radius, hide_border);
     }
 
     protected renderTitle(): string {
@@ -72,22 +90,7 @@ export class Stats extends Card {
             </div>
         `;
     }
-    constructor(
-        private title: string,
-        private rank: number,
-        private rating: number,
-        private max_rating: number,
-        private rated_matches: number,
-        private last_competed: Date,
-        theme = themes["default"],
-        show_icons: boolean = true,
-        hide_border: boolean = false,
-        width: number = 450,
-        height: number = 200,
-        border_radius: number = 4.5
-    ) {
-        super(width, height, theme,show_icons,border_radius, hide_border);
-    }
+    
 
     protected override Style(): string {
         return `
