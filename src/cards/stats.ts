@@ -3,6 +3,8 @@ import { themes,Theme } from "../../themes/themes.ts";
 import { formatDate } from "../utils.ts";
 
 export class Stats extends Card {
+    private rank_deg: number = 0;
+
     constructor(
         private title: string,
         private rank: number,
@@ -17,6 +19,7 @@ export class Stats extends Card {
         height: number = 200,
         border_radius: number = 4.5
     ) {
+        super(width, height, theme,show_icons,border_radius, hide_border);
         //dimention validation
         if(width == -1){
             width = 450;
@@ -27,11 +30,16 @@ export class Stats extends Card {
         if(border_radius == -1){
             border_radius = 4.5;
         }
-        super(width, height, theme,show_icons,border_radius, hide_border);
+
+        this.calcRankRingDeg();
+    }
+
+    protected calcRankRingDeg(): void {
+        this.rank_deg = ((this.rating % 400) / 400) * 360; //atcoder rating is always interval [0, 400)
     }
 
     protected renderTitle(): string {
-        return `<div id="title" class="">${this.title}'s Atcoder Stats</div>`;
+        return `<div id="title">${this.title}'s Atcoder Stats</div>`;
     }
     protected renderBody(): string {
         return `
@@ -93,73 +101,74 @@ export class Stats extends Card {
     
 
     protected override Style(): string {
+        console.log(this.rank_deg);
         return `
-            #title {{
-                color: ${this.theme.title_color};
+            #title {
+                color: #${this.theme.title_color};
                 font-size: 20px;
                 font-weight: 600;
                 margin-bottom: 10px;
-            }}
-            #stats-body {{
+            }
+            #stats-body {
                 display: flex;
                 flex-direction: row;
-            }}
-            #stats {{
-                width: 60%;
-            }}
-            #rank-circle {{
+            }
+            #stats {
+                width: 100%;
+            }
+            #rank-circle {
                 width: 40%;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-            }}
-            #competitions-history-body {{
+            }
+            #competitions-history-body {
                 width: 100%;
-            }}
-            .border {{
+            }
+            .border {
                 height: 2px;
                 background-color: rgb(228, 226, 226);
                 margin: 5px 20px 0px;
-            }}
-            .fadein {{
+            }
+            .fadein {
                 opacity: 0;
                 animation-name: fadein;
                 animation-duration: 0.8s;
                 animation-timing-function: ease-in-out;
                 animation-fill-mode: forwards;
-            }}
-            @keyframes fadein {{
-                0% {{
+            }
+            @keyframes fadein {
+                0% {
                     opacity: 0;
-                }}
-                100% {{
+                }
+                100% {
                     opacity: 1;
-                }}
-            }}
+                }
+            }
 
             /* Stats */
-            .stats-row {{
+            .stats-row {
                 height: 28px;
                 display: flex;
-            }}
-            .stats-cell {{
+            }
+            .stats-cell {
                 font-size: 16px;
                 font-weight: 700;
                 display: flex;
                 margin: auto auto auto 0px;
-            }}
-            .stats-cell:nth-child(2) {{
+            }
+            .stats-cell:nth-child(2) {
                 text-align: right;
                 margin: auto 0px auto auto;
-            }}
-            .icon {{
+            }
+            .icon {
                 width: 18px;
                 height: 18px;
                 margin: auto 5px auto 0px;
                 color: {self._option.theme.icon_color};
-            }}
+            }
 
-            .container {{
+            .container {
                 width: 95px;
                 height: 95px;
                 text-align: center;
@@ -167,8 +176,8 @@ export class Stats extends Card {
                 justify-content: center;
                 align-items: center;
                 margin-left: 20px;
-            }}
-            .circle {{
+            }
+            .circle {
                 width: 100%;
                 height: 100%;
                 border-radius: 50%;
@@ -179,54 +188,23 @@ export class Stats extends Card {
                 animation-name: conic-gradient;
                 animation-duration: 0.8s;
                 animation-fill-mode: forwards;
-                background-image: radial-gradient(${this.theme.bg_color} 60%, transparent 61%), conic-gradient(${this.theme.title_color} {deg}deg, ${this.theme.title_color}33 {deg}deg 360deg);
-            }}
-            .rating {{
-                color: ${this.theme.title_color};
-            }}
-            .rating-label {{
+                background-image: radial-gradient(#${this.theme.bg_color} 60%, transparent 61%), conic-gradient(#${this.theme.title_color} ${this.rank_deg}deg, #${this.theme.title_color}33 ${this.rank_deg}deg 360deg);
+            }
+            .rating {
+                color: #${this.theme.title_color};
+            }
+            .rating-label {
                 font-size: 16px;
                 font-weight: 600;
-            }}
-            .rating-text {{
+            }
+            .rating-text {
                 font-size: 24px;
                 font-weight: 800;
-            }}
+            }
 
-            @keyframes conic-gradient {{
+            @keyframes conic-gradient {
                 {"".join(keyframes)}
-            }}
-
-            /* Competition History */
-            .compe-val {{
-                font-size: 14px;
-                font-weight: 700;
-                text-align: center;
-                padding: 0;
-            }}
-            .compe-table {{
-                width: 100%;
-                table-layout: fixed;
-            }}
-            .compe-table > tr > th {{
-                height: 34px;
-                font-size: 14px;
-                padding: 0;
-            }}
-            .compe-row > td {{
-                height: 34px;
-            }}
-            .val-date {{
-                font-size: 12px;
-            }}
-            .val-contest {{
-                font-size: 12px;
-                text-align: left;
-                overflow: hidden;
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                -webkit-line-clamp: 2;
-            }}
+            }
         `;
     }
 }

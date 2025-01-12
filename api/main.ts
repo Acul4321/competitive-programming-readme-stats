@@ -32,6 +32,7 @@ router.get("/", (ctx) => {
 router.get("/:platform/:type/:username", async (ctx) => {
   ctx.response.type = "image/svg+xml";  // Set content type for SVG
   
+  //query perameter setup
   optionalQueryParams(ctx.request.url);
 
   //validate platform
@@ -112,6 +113,4 @@ function optionalQueryParams(url: URL): void {
   border_radius = parseFloat(queryParam.get('border_radius') ?? '-1');
   show_icons = queryParam.get('show_icons') === 'false' ? false : true;
   hide_border = queryParam.get('hide_border') === 'true' ? true : false;
-
-  console.log(theme, width, height, border_radius, show_icons, hide_border);
 }

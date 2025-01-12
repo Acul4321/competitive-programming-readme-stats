@@ -37,7 +37,7 @@ export abstract class Card {
             #svg-body {
                 margin: 0;
                 font-family: Segoe UI;
-                color: ${this.theme.text_color};
+                color: #${this.theme.text_color};
             }
             #card {
                 width: ${this.width - 2}px;
@@ -45,7 +45,7 @@ export abstract class Card {
                 
                 display: flex;
                 position: relative;
-                background-color: ${this.theme.bg_color};
+                background-color: #${this.theme.bg_color};
 
                 border: 1px solid rgb(228, 226, 226);
                 border-radius: 10px;
@@ -74,7 +74,6 @@ export abstract class Card {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               role="img"
-              aria-labelledby="descId"
             >
 
             <foreignObject x="0" y="0" width="100%" height="100%">
@@ -89,26 +88,10 @@ export abstract class Card {
                             </div>
                         </div>
                     </div>
-                    <style id="main-style">${style}</style>
                 </body>
-            </foreignObject>
-
-            <rect
-              data-testid="card-bg"
-              x="0.5"
-              y="0.5"
-              rx="${this.border_radius}"
-              height="99%"
-              stroke="${this.theme.border_color}"
-              width="${this.width - 1}"
-              fill="${
-                typeof this.theme.bg_color === "object"
-                  ? "url(#gradient)"
-                  : this.theme.bg_color
-              }"
-              stroke-opacity="${this.hide_border ? 0 : 1}"
-            />
+                </foreignObject>
+            <style>${style}</style>
             </svg>
-        `;
+            `;
     }
 }
