@@ -1,24 +1,35 @@
-import { themes } from "../../themes/themes.ts";
+import { themes,Theme } from "../../themes/themes.ts";
 export abstract class Card {
     protected width: number;
     protected height: number;
+    protected theme: Theme;
+    protected show_icons: boolean;
     protected border_radius: number;
-    protected theme;
     protected hide_border: boolean;
+
+    protected abstract default_width: number;
+    protected abstract default_height: number;
 
     constructor(
         width: number = 100,
         height: number= 100,
-        border_radius: number = 4.5,
         theme = themes["default"],
+        show_icons: boolean = true,
+        border_radius: number = 4.5,
         hide_border: boolean = false
 
     ) {
         this.width = width;
         this.height = height;
-        this.border_radius = border_radius;
         this.theme = theme;
+        this.show_icons = show_icons;
+        this.border_radius = border_radius;
         this.hide_border = hide_border;
+    }
+
+    protected validateDimentions(width:number,height:number): number[] {
+
+        return [width, height];
     }
 
     protected abstract renderTitle(): string;
@@ -34,7 +45,7 @@ export abstract class Card {
             #svg-body {
                 margin: 0;
                 font-family: Segoe UI;
-                color: ${this.theme.text_color};
+                color: #${this.theme.text_color};
             }
             #card {
                 width: ${this.width - 2}px;
@@ -42,7 +53,7 @@ export abstract class Card {
                 
                 display: flex;
                 position: relative;
-                background-color: ${this.theme.bg_color};
+                background-color: #${this.theme.bg_color};
 
                 border: 1px solid rgb(228, 226, 226);
                 border-radius: 10px;
@@ -65,47 +76,30 @@ export abstract class Card {
 
         return `
             <svg
-              width="${this.width}"
-              height="${this.height}"
-              viewBox="0 0 ${this.width} ${this.height}"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-labelledby="descId"
+            viewBox="0 0 ${this.width} ${this.height}"
+            width="${this.width}"
+            height="${this.height}"
+            preserveAspectRatio="xMidYMid meet"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
             >
 
-            <foreignObject x="0" y="0" width="100%" height="100%">
-                <body id="svg-body" xmlns="http://www.w3.org/1999/xhtml">
-                    <div id="card">
-                        <div id="card-body">
-                            <div id="title-container">
-                                ${this.renderTitle()}
-                            </div>
-                            <div id="body-container">
-                                ${this.renderBody()}
-                            </div>
-                        </div>
+            <foreignObject x="0" y="0" width="${this.width}" height="${this.height}" overflow="auto">
+            <body id="svg-body" xmlns="http://www.w3.org/1999/xhtml">
+                <div id="card">
+                <div id="card-body">
+                    <div id="title-container">
+                    ${this.renderTitle()}
                     </div>
-                    <style id="main-style">${style}</style>
-                </body>
+                    <div id="body-container">
+                    ${this.renderBody()}
+                    </div>
+                </div>
+                </div>
+            </body>
             </foreignObject>
-
-            <rect
-              data-testid="card-bg"
-              x="0.5"
-              y="0.5"
-              rx="${this.border_radius}"
-              height="99%"
-              stroke="${this.theme.border_color}"
-              width="${this.width - 1}"
-              fill="${
-                typeof this.theme.bg_color === "object"
-                  ? "url(#gradient)"
-                  : this.theme.bg_color
-              }"
-              stroke-opacity="${this.hide_border ? 0 : 1}"
-            />
+            <style>${style}</style>
             </svg>
-        `;
+            `;
     }
 }

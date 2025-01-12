@@ -1,3 +1,11 @@
+export interface Theme {
+    title_color: string;
+    icon_color: string;
+    text_color: string;
+    bg_color: string;
+    border_color: string;
+  }
+
 //Themes from https://github.com/anuraghazra/github-readme-stats/blob/master/themes/index.js
 export const themes = {
     default: {

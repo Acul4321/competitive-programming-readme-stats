@@ -1,6 +1,6 @@
 import { Application, Router } from "@oak/oak";
 import { oakCors } from "@tajpouria/cors";
-import { themes } from "../themes/themes.ts";
+import { themes,Theme } from "../themes/themes.ts";
 
 import { Atcoder } from "../src/platform/atcoder.ts";  
 import { Platform } from "../src/platform/platform.ts";
@@ -10,78 +10,41 @@ import { Stats } from "../src/cards/stats.ts";
 const PORT:string = Deno.env.get("SERVER_PORT") ?? "8000";
 const router = new Router();
 
+//variables
+let platform: Platform;
+let type: Card;
+//query perameter variables
+let width: number;
+let height: number;
+let theme: Theme;
+let show_icons: boolean;
+let hide_border: boolean;
+let border_radius: number;
+
+//
+// routes
+//
+
 router.get("/", (ctx) => {
   ctx.response.body = 'Welcome to The Competitive Programming Readme Stats \nThe Supported Platforms Include: \natcoder \n \nThe Types of Cards are:\nstats \n \nThe Command Structure is:\n/{platform}/{type}/{username}?{optionalPeram}'
 })
 
 router.get("/:platform/:type/:username", async (ctx) => {
   ctx.response.type = "image/svg+xml";  // Set content type for SVG
-
-  let platform: Platform;
-  let type : Card;
+  
+  //query perameter setup
+  optionalQueryParams(ctx.request.url);
 
   //validate platform
-  switch(ctx.params.platform) {
-    case "atcoder": {
-      platform = new Atcoder();
-      break;
-    }
-    default: {
-      ctx.response.body = "please provide a supported platform";
-      return;
-    }
-  }
+  platform = validatePlatform(ctx.params.platform);
+
   //validate username
   platform.profile = await platform.fetchProfile(ctx.params.username)
-
-  // parse optional perameters
-  const queryParam = new Map<string, string>();
-  ctx.request.url.searchParams.forEach((v, k) => {
-    queryParam.set(k, v);
-  });
-  ctx.response.body = Object.fromEntries(queryParam);
   
-  //optional perameters setting
-  const theme = queryParam.get('theme') as keyof typeof themes ?? "default";
-  let selectedTheme;
-  let hide_border = queryParam.get('border_radius') === 'true';
-  if (theme in themes){
-    selectedTheme = { ...themes[theme], border_color: "e4e2e2" }
-    if(hide_border == undefined){
-      hide_border = true;
-    }
-  } else {
-    selectedTheme = themes["default"];
-  }
-  const width: number = parseInt(queryParam.get('width') ?? '100');
-  const height: number = parseInt(queryParam.get('height') ?? '100');
-  const border_radius: number = parseFloat(queryParam.get('border_radius') ?? '4.5');
-
   //validate type
-  switch(ctx.params.type) {
-    case "stats": {
-      type = new Stats(
-        platform.profile.getId(), 
-        platform.profile.getRank(), 
-        platform.profile.getRating(), 
-        platform.profile.getHighestRating(), 
-        platform.profile.getRatedMatches(),
-        platform.profile.getLastCompeted(),
-        selectedTheme, 
-        hide_border, 
-        width, 
-        height, 
-        border_radius);
-      break;
-    }
-    default: {
-      ctx.response.body = "please provide a correct card type";
-      return;
-    }
-  }
-
+  type = validateType(ctx.params.type);
   
-  //ctx.response.body = { ...Object.fromEntries(queryParam), theme: selectedTheme};
+  //render the card
   ctx.response.body = type.render();
 });
 
@@ -91,3 +54,63 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 await app.listen({ port: parseInt(PORT) });
+
+//
+//functions
+//
+
+function validatePlatform(platform: string): Platform{
+    switch(platform) {
+    case "atcoder": {
+      return new Atcoder();
+    }
+    default: {
+      throw new Error("Platform not supported");
+    }
+  }
+}
+
+function validateType(type: string): Card {
+  switch(type) {
+    case "stats": {
+      return new Stats(
+        platform.profile.getId(), 
+        platform.profile.getRank(), 
+        platform.profile.getRating(), 
+        platform.profile.getHighestRating(), 
+        platform.profile.getRatedMatches(),
+        platform.profile.getLastCompeted(),
+        theme, 
+        show_icons,
+        hide_border, 
+        width, 
+        height, 
+        border_radius);
+    }
+    default: {
+      throw new Error("Card type not supported");
+    }
+  }
+}
+
+function optionalQueryParams(url: URL): void {
+  // parse optional perameters
+  const queryParam = new Map<string, string>();
+  url.searchParams.forEach((v, k) => {
+    queryParam.set(k, v);
+  });
+  
+  //set optional perameters
+  const th = queryParam.get('theme') as keyof typeof themes ?? "default";
+  if (th in themes){
+    theme = { ...themes[th], border_color: (themes[th] as Theme).border_color ?? "e4e2e2" };
+  } else {
+    theme = themes["default"];
+  }
+
+  width = parseInt(queryParam.get('width') ?? '-1');
+  height = parseInt(queryParam.get('height') ?? '-1');
+  border_radius = parseFloat(queryParam.get('border_radius') ?? '-1');
+  show_icons = queryParam.get('show_icons') === 'false' ? false : true;
+  hide_border = queryParam.get('hide_border') === 'true' ? true : false;
+}

@@ -1,5 +1,5 @@
 import { Platform, Profile, Competition } from "./platform.ts";
-import { DOMParser, Element } from "jsr:@b-fuze/deno-dom";
+import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
 export class Atcoder extends Platform {
     constructor() {
@@ -29,7 +29,7 @@ export class Atcoder extends Platform {
     }
 
     async fetchCompetitionHistory(url: string): Promise<Competition[]> {
-        return [new Competition(new Date(), true, "contest_jp")];
+        return await [new Competition(new Date(), true, "contest_jp")];
     }
 
     //Profile Setters
