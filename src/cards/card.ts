@@ -55,8 +55,8 @@ export abstract class Card {
                 position: relative;
                 background-color: #${this.theme.bg_color};
 
-                border: 1px solid rgb(228, 226, 226);
-                border-radius: 10px;
+                border: ${this.hide_border === false ? 1 : 0}px solid rgb(228, 226, 226);
+                border-radius: ${this.border_radius}px;
             }
             #card-body {
                 margin: 20px;

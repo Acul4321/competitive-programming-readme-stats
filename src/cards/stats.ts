@@ -1,6 +1,7 @@
 import { Card } from './card.ts';
 import { themes,Theme } from "../../themes/themes.ts";
 import { formatDate } from "../utils.ts";
+import { icons } from "../icons.ts";
 
 export class Stats extends Card {
     private rank_deg: number = 0;
@@ -34,6 +35,10 @@ export class Stats extends Card {
             this.width = height * (this.default_width/this.default_height);
         }
 
+        if(border_radius == -1) {
+            this.border_radius = 4.5;
+        }
+
         this.calcRankRingDeg();
     }
     
@@ -62,24 +67,28 @@ export class Stats extends Card {
             <table style="width: 100%">
                 <tr class="stats-row">
                     <td class="stats-cell">
+                        ${this.show_icons === true ? '<div class="icon">' + icons.rank + '</div>' : ""}
                         <div id="rank-label">Rank:</div>
                     </td>
                     <td class="stats-cell" id="rank-value">${this.rank}</td>
                 </tr>
                 <tr class="stats-row">
                     <td class="stats-cell">
+                        ${this.show_icons === true ? '<div class="icon">' + icons.max_rating + '</div>' : ""}
                         <div id="max_rating-label">Max Rating:</div>
                     </td>
                     <td class="stats-cell" id="max_rating-value">${this.max_rating}</td>
                 </tr>
                 <tr class="stats-row">
                     <td class="stats-cell">
+                        ${this.show_icons === true ? '<div class="icon">' + icons.rated_matches + '</div>' : ""}
                         <div id="rated_matches-label">Rated Matches:</div>
                     </td>
                     <td class="stats-cell" id="rated_matches-value">${this.rated_matches}</td>
                 </tr>
                 <tr class="stats-row">
                     <td class="stats-cell">
+                        ${this.show_icons === true ? '<div class="icon">' + icons.last_competed + '</div>' : ""}
                         <div id="last_competed-label">Last Competed:</div>
                     </td>
                     <td class="stats-cell" id="last_competed-value">${formatDate(this.last_competed)}</td>
@@ -92,11 +101,11 @@ export class Stats extends Card {
         return `
             <div class="container">
                 <div class="circle">
-                    <div class="rating">
-                        <span class="rating-label">Rating</span>
-                        <br />
-                        <span class="rating-text">${this.rating}</span>
-                    </div>
+                </div>
+                <div class="rating">
+                    <span class="rating-label">Rating</span>
+                    <br />
+                    <span class="rating-text">${this.rating}</span>
                 </div>
             </div>
         `;
@@ -164,8 +173,8 @@ export class Stats extends Card {
                 margin: auto 0px auto auto;
             }
             .icon {
-                width: 18px;
-                height: 18px;
+                width: ${this.width/25}px;
+                height: ${this.height/12}px;
                 margin: auto 5px auto 0px;
                 color: ${this.theme.icon_color};
             }
@@ -174,7 +183,7 @@ export class Stats extends Card {
                 width: ${this.width/5}px;
                 height: ${this.height/2.2}px;
                 text-align: center;
-                display: flex;
+                display: relative;
                 justify-content: center;
                 align-items: center;
                 margin-left: 20px;
@@ -183,24 +192,33 @@ export class Stats extends Card {
                 width: 100%;
                 height: 100%;
                 border-radius: 50%;
-                display: flex;
+                display: absolute;
                 justify-content: center;
                 align-items: center;
+                
 
                 animation-name: conic-gradient;
                 animation-duration: 0.8s;
                 animation-fill-mode: forwards;
                 background-image: radial-gradient(#${this.theme.bg_color} 60%, transparent 61%), conic-gradient(#${this.theme.title_color} ${this.rank_deg}deg, #${this.theme.title_color}33 ${this.rank_deg}deg 360deg);
+                mask-image: radial-gradient(
+                    circle, 
+                    transparent 59%, 
+                    black 60%
+                );
+                mask-composite: intersect;
             }
             .rating {
                 color: #${this.theme.text_color};
+                display: absolute;
+                transform: translateY(-130%);
             }
             .rating-label {
                 font-size: ${this.width/30}px;
                 font-weight: 600;
             }
             .rating-text {
-                font-size: ${this.width/20}px;
+                font-size: ${this.width/18}px;
                 font-weight: 800;
             }
 
