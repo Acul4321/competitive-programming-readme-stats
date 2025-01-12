@@ -7,6 +7,9 @@ export abstract class Card {
     protected border_radius: number;
     protected hide_border: boolean;
 
+    protected abstract default_width: number;
+    protected abstract default_height: number;
+
     constructor(
         width: number = 100,
         height: number= 100,
@@ -22,6 +25,11 @@ export abstract class Card {
         this.show_icons = show_icons;
         this.border_radius = border_radius;
         this.hide_border = hide_border;
+    }
+
+    protected validateDimentions(width:number,height:number): number[] {
+
+        return [width, height];
     }
 
     protected abstract renderTitle(): string;

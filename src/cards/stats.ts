@@ -5,6 +5,9 @@ import { formatDate } from "../utils.ts";
 export class Stats extends Card {
     private rank_deg: number = 0;
 
+    protected default_width: number = 450;
+    protected default_height: number = 200;
+
     constructor(
         private title: string,
         private rank: number,
@@ -20,18 +23,15 @@ export class Stats extends Card {
         border_radius: number = 4.5
     ) {
         super(width, height, theme,show_icons,border_radius, hide_border);
-        //dimention validation(width:height 9:4)
-        if (width == -1 && height == -1) {
-            this.width = 450;
-            this.height = 200;
-        } else if (width && height == -1) {
-            this.height = width * (4/9);
-        } else if (height && width == -1) {
-            this.width = height * (9/4);
-        }
 
-        if(border_radius == -1){
-            this.border_radius = 4.5;
+        //TODO: optimise to be in main Card class
+        if (width == -1 && height == -1) {
+            this.width = this.default_width;
+            this.height = this.default_height;
+        } else if (width && height == -1) {
+            this.height = width * (this.default_height/this.default_width);
+        } else if (height && width == -1) {
+            this.width = height * (this.default_width/this.default_height);
         }
 
         this.calcRankRingDeg();
@@ -107,7 +107,7 @@ export class Stats extends Card {
         return `
             #title {
                 color: #${this.theme.title_color};
-                font-size: 20px;
+                font-size: ${this.width/20}px;
                 font-weight: 600;
                 margin-bottom: 10px;
             }
@@ -150,11 +150,11 @@ export class Stats extends Card {
 
             /* Stats */
             .stats-row {
-                height: 28px;
+                height: ${this.height/7}px;
                 display: flex;
             }
             .stats-cell {
-                font-size: 16px;
+                font-size: ${this.width/30}px;
                 font-weight: 700;
                 display: flex;
                 margin: auto auto auto 0px;
@@ -167,12 +167,12 @@ export class Stats extends Card {
                 width: 18px;
                 height: 18px;
                 margin: auto 5px auto 0px;
-                color: {self._option.theme.icon_color};
+                color: ${this.theme.icon_color};
             }
 
             .container {
-                width: 95px;
-                height: 95px;
+                width: ${this.width/5}px;
+                height: ${this.height/2.2}px;
                 text-align: center;
                 display: flex;
                 justify-content: center;
@@ -196,11 +196,11 @@ export class Stats extends Card {
                 color: #${this.theme.text_color};
             }
             .rating-label {
-                font-size: 16px;
+                font-size: ${this.width/30}px;
                 font-weight: 600;
             }
             .rating-text {
-                font-size: 24px;
+                font-size: ${this.width/20}px;
                 font-weight: 800;
             }
 
