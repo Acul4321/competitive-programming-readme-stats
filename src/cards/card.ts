@@ -68,28 +68,28 @@ export abstract class Card {
 
         return `
             <svg
-              width="${this.width}"
-              height="${this.height}"
-              viewBox="0 0 ${this.width} ${this.height}"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
+            viewBox="0 0 ${this.width} ${this.height}"
+            width="${this.width}"
+            height="${this.height}"
+            preserveAspectRatio="xMidYMid meet"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
             >
 
-            <foreignObject x="0" y="0" width="100%" height="100%">
-                <body id="svg-body" xmlns="http://www.w3.org/1999/xhtml">
-                    <div id="card">
-                        <div id="card-body">
-                            <div id="title-container">
-                                ${this.renderTitle()}
-                            </div>
-                            <div id="body-container">
-                                ${this.renderBody()}
-                            </div>
-                        </div>
+            <foreignObject x="0" y="0" width="${this.width}" height="${this.height}" overflow="auto">
+            <body id="svg-body" xmlns="http://www.w3.org/1999/xhtml">
+                <div id="card">
+                <div id="card-body">
+                    <div id="title-container">
+                    ${this.renderTitle()}
                     </div>
-                </body>
-                </foreignObject>
+                    <div id="body-container">
+                    ${this.renderBody()}
+                    </div>
+                </div>
+                </div>
+            </body>
+            </foreignObject>
             <style>${style}</style>
             </svg>
             `;

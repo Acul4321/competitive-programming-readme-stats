@@ -20,20 +20,23 @@ export class Stats extends Card {
         border_radius: number = 4.5
     ) {
         super(width, height, theme,show_icons,border_radius, hide_border);
-        //dimention validation
-        if(width == -1){
-            width = 450;
+        //dimention validation(width:height 9:4)
+        if (width == -1 && height == -1) {
+            this.width = 450;
+            this.height = 200;
+        } else if (width && height == -1) {
+            this.height = width * (4/9);
+        } else if (height && width == -1) {
+            this.width = height * (9/4);
         }
-        if(height == -1){
-            height = 200;
-        }
+
         if(border_radius == -1){
-            border_radius = 4.5;
+            this.border_radius = 4.5;
         }
 
         this.calcRankRingDeg();
     }
-
+    
     protected calcRankRingDeg(): void {
         this.rank_deg = ((this.rating % 400) / 400) * 360; //atcoder rating is always interval [0, 400)
     }
@@ -101,7 +104,6 @@ export class Stats extends Card {
     
 
     protected override Style(): string {
-        console.log(this.rank_deg);
         return `
             #title {
                 color: #${this.theme.title_color};
@@ -114,7 +116,7 @@ export class Stats extends Card {
                 flex-direction: row;
             }
             #stats {
-                width: 100%;
+                width: 60%;
             }
             #rank-circle {
                 width: 40%;
@@ -191,7 +193,7 @@ export class Stats extends Card {
                 background-image: radial-gradient(#${this.theme.bg_color} 60%, transparent 61%), conic-gradient(#${this.theme.title_color} ${this.rank_deg}deg, #${this.theme.title_color}33 ${this.rank_deg}deg 360deg);
             }
             .rating {
-                color: #${this.theme.title_color};
+                color: #${this.theme.text_color};
             }
             .rating-label {
                 font-size: 16px;
