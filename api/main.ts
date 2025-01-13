@@ -2,8 +2,10 @@ import { Application, Router } from "@oak/oak";
 import { oakCors } from "@tajpouria/cors";
 import { themes,Theme } from "../themes/themes.ts";
 
-import { Atcoder } from "../src/platform/atcoder.ts";  
 import { Platform } from "../src/platform/platform.ts";
+import { Atcoder } from "../src/platform/atcoder.ts";  
+import { Codeforces } from "../src/platform/codeforces.ts";
+
 import { Card } from "../src/cards/card.ts";
 import { Stats } from "../src/cards/stats.ts";
 
@@ -64,6 +66,9 @@ function validatePlatform(platform: string): Platform{
     case "atcoder": {
       return new Atcoder();
     }
+    case "codeforces": {
+      return new Codeforces();
+    }
     default: {
       throw new Error("Platform not supported");
     }
@@ -74,12 +79,7 @@ function validateType(type: string): Card {
   switch(type) {
     case "stats": {
       return new Stats(
-        platform.profile.getId(), 
-        platform.profile.getRank(), 
-        platform.profile.getRating(), 
-        platform.profile.getHighestRating(), 
-        platform.profile.getRatedMatches(),
-        platform.profile.getLastCompeted(),
+        platform,
         theme, 
         show_icons,
         hide_border, 

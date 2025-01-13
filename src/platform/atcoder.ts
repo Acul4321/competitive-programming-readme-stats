@@ -2,6 +2,16 @@ import { Platform, Profile, Competition } from "./platform.ts";
 import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
 export class Atcoder extends Platform {
+    protected override platform_rating_bands: Map<number, Record<string, string>> = new Map([
+        [0, { name: "Grey", color: "#808080" }],
+        [400, { name: "Brown", color: "#804000" }],
+        [800, { name: "Green", color: "#008000" }],
+        [1200, { name: "Cyan", color: "#00C0C0" }],
+        [1600, { name: "Blue", color: "#0000FF" }],
+        [2000, { name: "Yellow", color: "#C0C000" }],
+        [2400, { name: "Orange", color: "#FF8000" }],
+        [2800, { name: "Red", color: "#FF0000" }]
+    ]);
     constructor() {
         super("https://atcoder.jp/user/");
     }
@@ -31,7 +41,4 @@ export class Atcoder extends Platform {
     async fetchCompetitionHistory(url: string): Promise<Competition[]> {
         return await [new Competition(new Date(), true, "contest_jp")];
     }
-
-    //Profile Setters
-
 }

@@ -30,3 +30,13 @@ optional:
 ```
 
 [![Acul4321's atcoder stats](https://cp-readme-stats.deno.dev/atcoder/stats/acul4321?theme=transparent)](https://atcoder.jp/users/Acul4321)
+
+TODO:
+card settings(hide stat peram)
+rank colour for stat ring
+
+heatmap card
+
+elo graph
+
+codeforces support
