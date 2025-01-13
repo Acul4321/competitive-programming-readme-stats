@@ -1,7 +1,7 @@
 export abstract class Platform {
     protected platform_url: string;
     public profile: Profile = new Profile('');
-    
+
     protected abstract platform_rating_bands: Map<number, Record<string, string>>;
 
     constructor(url: string) {
@@ -9,6 +9,17 @@ export abstract class Platform {
     }
     getUserURL(username: string): string {
         return this.platform_url + username;
+    }
+
+    // Stats rank ring degrees calculation
+    calcRatingBandProgress(rating: number): number{ //returns the progress(0-1) from the previous band to the next
+        const bands = Array.from(this.platform_rating_bands.keys()).sort((a, b) => a - b);
+        for (let i = 0; i < bands.length - 1; i++) {
+            if (rating >= bands[i] && rating < bands[i + 1]) {
+                return (rating - bands[i]) / (bands[i + 1] - bands[i]);
+            }
+        }
+        return 1; // If rank is higher than the highest band
     }
 
     async getSourceHTML(username: string): Promise<string> {

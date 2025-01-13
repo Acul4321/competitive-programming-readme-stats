@@ -74,12 +74,7 @@ function validateType(type: string): Card {
   switch(type) {
     case "stats": {
       return new Stats(
-        platform.profile.getId(), 
-        platform.profile.getRank(), 
-        platform.profile.getRating(), 
-        platform.profile.getHighestRating(), 
-        platform.profile.getRatedMatches(),
-        platform.profile.getLastCompeted(),
+        platform,
         theme, 
         show_icons,
         hide_border, 

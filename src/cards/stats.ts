@@ -2,20 +2,17 @@ import { Card } from './card.ts';
 import { themes,Theme } from "../../themes/themes.ts";
 import { formatDate } from "../utils.ts";
 import { icons } from "../icons.ts";
+import { Platform } from "../platform/platform.ts";
 
 export class Stats extends Card {
     private rank_deg: number = 0;
+
 
     protected default_width: number = 450;
     protected default_height: number = 200;
 
     constructor(
-        private title: string,
-        private rank: number,
-        private rating: number,
-        private max_rating: number,
-        private rated_matches: number,
-        private last_competed: Date,
+        private platform: Platform,
         theme:Theme = themes["default"],
         show_icons: boolean = true,
         hide_border: boolean = false,
@@ -39,15 +36,11 @@ export class Stats extends Card {
             this.border_radius = 4.5;
         }
 
-        this.calcRankRingDeg();
-    }
-    
-    protected calcRankRingDeg(): void {
-        this.rank_deg = ((this.rating % 400) / 400) * 360; //atcoder rating is always interval [0, 400)
+        this.rank_deg = 360 * this.platform.calcRatingBandProgress(this.platform.profile.getRating());
     }
 
     protected renderTitle(): string {
-        return `<div id="title">${this.title}'s Atcoder Stats</div>`;
+        return `<div id="title">${this.platform.profile.getId()}'s Atcoder Stats</div>`;
     }
     protected renderBody(): string {
         return `
@@ -70,28 +63,28 @@ export class Stats extends Card {
                         ${this.show_icons === true ? '<div class="icon">' + icons.rank + '</div>' : ""}
                         <div id="rank-label">Rank:</div>
                     </td>
-                    <td class="stats-cell" id="rank-value">${this.rank}</td>
+                    <td class="stats-cell" id="rank-value">${this.platform.profile.getRank()}</td>
                 </tr>
                 <tr class="stats-row">
                     <td class="stats-cell">
                         ${this.show_icons === true ? '<div class="icon">' + icons.max_rating + '</div>' : ""}
                         <div id="max_rating-label">Max Rating:</div>
                     </td>
-                    <td class="stats-cell" id="max_rating-value">${this.max_rating}</td>
+                    <td class="stats-cell" id="max_rating-value">${this.platform.profile.getHighestRating()}</td>
                 </tr>
                 <tr class="stats-row">
                     <td class="stats-cell">
                         ${this.show_icons === true ? '<div class="icon">' + icons.rated_matches + '</div>' : ""}
                         <div id="rated_matches-label">Rated Matches:</div>
                     </td>
-                    <td class="stats-cell" id="rated_matches-value">${this.rated_matches}</td>
+                    <td class="stats-cell" id="rated_matches-value">${this.platform.profile.getRatedMatches()}</td>
                 </tr>
                 <tr class="stats-row">
                     <td class="stats-cell">
                         ${this.show_icons === true ? '<div class="icon">' + icons.last_competed + '</div>' : ""}
                         <div id="last_competed-label">Last Competed:</div>
                     </td>
-                    <td class="stats-cell" id="last_competed-value">${formatDate(this.last_competed)}</td>
+                    <td class="stats-cell" id="last_competed-value">${formatDate(this.platform.profile.getLastCompeted())}</td>
                 </tr>
             </table>
         `;
@@ -105,7 +98,7 @@ export class Stats extends Card {
                 <div class="rating">
                     <span class="rating-label">Rating</span>
                     <br />
-                    <span class="rating-text">${this.rating}</span>
+                    <span class="rating-text">${this.platform.profile.getRating()}</span>
                 </div>
             </div>
         `;
