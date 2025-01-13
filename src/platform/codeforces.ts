@@ -53,7 +53,48 @@ export class Codeforces extends Platform {
         );
     }
 
-    async fetchCompetitionHistory(url: string): Promise<Competition[]> {
-        return await [new Competition(new Date(), true, "contest_jp")];
+    async fetchCompetitionHistory(username: string): Promise<Competition[]> {
+        const competitionHistory: Competition[] = [];
+
+        let old_rating: number = 0;
+
+        const contestSource = (await fetch("https://codeforces.com/contests/with/" + username + "?type=all")).text();
+        const doc = new DOMParser().parseFromString(await contestSource, 'text/html');
+
+        const rows = Array.from(doc.querySelectorAll("table")[5].querySelectorAll("tr")).reverse();
+        for(const row of rows) {
+            let contest_name = '';
+            let date = new Date();
+            let is_rated = false;
+            let rank = 0;
+            const performance = -1;
+            let new_rating = 0;
+            
+            const cells = row.querySelectorAll("td");
+            for(let i = cells.length - 1; i >= 0; i--){ //this is a workaround to get the data from the table
+                const cell = cells[i];
+                if(i == 1){
+                    contest_name = cell.textContent.trim();
+                } else if (i == 2){
+                    date = new Date(cell.textContent.trim());
+                } else if (i == 3){
+                    if(cell.textContent.trim() == '—'){
+                        is_rated = false;
+                        competitionHistory.push(new Competition(contest_name, date, is_rated));
+                        continue;
+                    } else{
+                        is_rated = true;
+                        rank = parseInt(cell.textContent.trim());
+                    }
+                } else if (i == 6){
+                    new_rating = parseInt(cell.textContent.trim());
+                }
+            }
+            if (is_rated) {
+                competitionHistory.push(new Competition(contest_name, date, is_rated, rank, performance, old_rating, new_rating));
+                old_rating = new_rating;
+            }
+        }
+        return competitionHistory;
+        }
     }
-}
