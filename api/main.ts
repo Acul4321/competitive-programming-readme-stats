@@ -23,6 +23,9 @@ let show_icons: boolean;
 let hide_border: boolean;
 let border_radius: number;
 
+//stats Card
+let use_rank_colour: boolean;
+
 //
 // routes
 //
@@ -80,6 +83,7 @@ function validateType(type: string): Card {
     case "stats": {
       return new Stats(
         platform,
+        use_rank_colour,
         theme, 
         show_icons,
         hide_border, 
@@ -113,4 +117,5 @@ function optionalQueryParams(url: URL): void {
   border_radius = parseFloat(queryParam.get('border_radius') ?? '-1');
   show_icons = queryParam.get('show_icons') === 'false' ? false : true;
   hide_border = queryParam.get('hide_border') === 'true' ? true : false;
+  use_rank_colour = queryParam.get('use_rank_colour') === 'true' ? true : false;
 }
