@@ -10,6 +10,7 @@ inspired by [github-readme-stats](https://github.com/anuraghazra/github-readme-s
 ### Perams
 platform:
 - atcoder
+- codeforces
 
 type:
 - stats
@@ -38,5 +39,3 @@ rank colour for stat ring
 heatmap card
 
 elo graph
-
-codeforces support
