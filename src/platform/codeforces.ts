@@ -33,7 +33,7 @@ export class Codeforces extends Platform {
         const rated_matches = doc.querySelectorAll("table")[5].querySelectorAll("tr")[1].querySelectorAll("td")[0].textContent.trim();
         const last_competed = doc.querySelectorAll("table")[5].querySelectorAll("tr")[1].querySelectorAll("td")[2].textContent.trim();
 
-        const rankResponse = await fetch("https://codeforces.com/api/user.ratedList?activeOnly=false&includeRetired=false");
+        const rankResponse = await fetch("https://codeforces.com/api/user.ratedList?activeOnly=false&includeRetired=true");
         const rank_json =  await rankResponse.json();
         let rank;
         for( let i = 0; i < rank_json.result.length; i++) {
