@@ -17,10 +17,10 @@ export abstract class Platform {
         const bands = Array.from(this.platform_rating_bands.keys()).sort((a, b) => a - b);
         for (let i = 0; i < bands.length; i++) {
             if (rating <= bands[i]) {
-                return this.platform_rating_bands.get(bands[i-1])?.color ?? "#000000";
+                return this.platform_rating_bands.get(bands[i-1])?.colour ?? "#000000";
             }
         }
-        return this.platform_rating_bands.get(bands[bands.length-1])?.color ?? "#000000"; // If rank is higher than the highest
+        return this.platform_rating_bands.get(bands[bands.length-1])?.colour ?? "#000000"; // If rank is higher than the highest
     }
 
     // Stats rank ring degrees calculation
@@ -40,7 +40,7 @@ export abstract class Platform {
     }
 
     abstract fetchProfile(username: string): Promise<Profile>;
-    abstract fetchCompetitionHistory(url: string): Promise<Competition[]>;
+    abstract fetchCompetitionHistory(username: string): Promise<Competition[]>;
 
 }
 
@@ -51,7 +51,8 @@ export class Profile {
     protected highest_rating?: number;
     protected rated_matches?: number;
     protected last_competed?: Date;
-    protected competition_history: Competition[] = [];
+    
+    public competition_history: Competition[] = [];
 
     constructor(
         id: string,
@@ -88,32 +89,32 @@ export class Profile {
     getLastCompeted(): Date {
         return this.last_competed ?? new Date();
     }
+    getCompetitionHistory(): Competition[] {
+        return this.competition_history;
+    }
 }
 
 export class Competition {
+    protected contest_name: string;
     protected date: Date;
     protected is_rated: boolean;
-    protected contest_jp: string;
-    protected contest_en?: string;
     protected rank?: number;
     protected performance?: number;
     protected old_rating?: number;
     protected new_rating?: number;
 
     constructor(
+        contest_name: string,
         date: Date,
         is_rated: boolean,
-        contest_jp: string,
-        contest_en?: string,
         rank?: number,
         performance?: number,
         old_rating?: number,
         new_rating?: number
     ) {
+        this.contest_name = contest_name;
         this.date = date;
         this.is_rated = is_rated;
-        this.contest_jp = contest_jp;
-        this.contest_en = contest_en;
         this.rank = rank;
         this.performance = performance;
         this.old_rating = old_rating;

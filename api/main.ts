@@ -43,8 +43,9 @@ router.get("/:platform/:type/:username", async (ctx) => {
   //validate platform
   platform = validatePlatform(ctx.params.platform);
 
-  //validate username
+  // init profile and competition history
   platform.profile = await platform.fetchProfile(ctx.params.username)
+  platform.profile.competition_history = await platform.fetchCompetitionHistory(ctx.params.username);
   
   //validate type
   type = validateType(ctx.params.type);
