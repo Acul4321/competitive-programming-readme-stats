@@ -6,13 +6,14 @@ import { Platform } from "../platform/platform.ts";
 
 export class Stats extends Card {
     private rank_deg: number = 0;
-
+    private rank_colour: string = "#000000";
 
     protected default_width: number = 450;
     protected default_height: number = 200;
 
     constructor(
         private platform: Platform,
+        private use_rank_colour: boolean = false,
         theme:Theme = themes["default"],
         show_icons: boolean = true,
         hide_border: boolean = false,
@@ -36,6 +37,7 @@ export class Stats extends Card {
             this.border_radius = 4.5;
         }
 
+        this.rank_colour = this.platform.getRankColour(this.platform.profile.getRating());
         this.rank_deg = 360 * this.platform.calcRatingBandProgress(this.platform.profile.getRating());
     }
 
@@ -193,7 +195,7 @@ export class Stats extends Card {
                 animation-name: conic-gradient;
                 animation-duration: 0.8s;
                 animation-fill-mode: forwards;
-                background-image: radial-gradient(#${this.theme.bg_color} 60%, transparent 61%), conic-gradient(#${this.theme.title_color} ${this.rank_deg}deg, #${this.theme.title_color}33 ${this.rank_deg}deg 360deg);
+                background-image: radial-gradient(#${this.theme.bg_color} 60%, transparent 61%), conic-gradient(${this.use_rank_colour ? this.rank_colour : '#' + this.theme.title_color} ${this.rank_deg}deg, ${this.use_rank_colour ? this.rank_colour : '#' + this.theme.title_color}33 ${this.rank_deg}deg 360deg);
                 mask-image: radial-gradient(
                     circle, 
                     transparent 59%, 

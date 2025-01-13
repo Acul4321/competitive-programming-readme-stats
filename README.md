@@ -10,6 +10,7 @@ inspired by [github-readme-stats](https://github.com/anuraghazra/github-readme-s
 ### Perams
 platform:
 - atcoder
+- codeforces
 
 type:
 - stats
@@ -24,6 +25,9 @@ optional:
 - border_radius
 - hide_border
 
+optional(stats):
+- use_rank_colour
+
 ## Example
 ``` md
 [![Acul4321's atcoder stats](https://cp-readme-stats.deno.dev/atcoder/stats/acul4321?theme=transparent)](https://atcoder.jp/users/Acul4321)
@@ -33,10 +37,7 @@ optional:
 
 TODO:
 card settings(hide stat peram)
-rank colour for stat ring
 
 heatmap card
 
 elo graph
-
-codeforces support
