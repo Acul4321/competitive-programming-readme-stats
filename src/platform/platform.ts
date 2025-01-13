@@ -1,6 +1,8 @@
 export abstract class Platform {
     protected platform_url: string;
     public profile: Profile = new Profile('');
+    
+    protected abstract platform_rating_bands: Map<number, Record<string, string>>;
 
     constructor(url: string) {
         this.platform_url = url;
