@@ -2,8 +2,10 @@ import { Application, Router } from "@oak/oak";
 import { oakCors } from "@tajpouria/cors";
 import { themes,Theme } from "../themes/themes.ts";
 
-import { Atcoder } from "../src/platform/atcoder.ts";  
 import { Platform } from "../src/platform/platform.ts";
+import { Atcoder } from "../src/platform/atcoder.ts";  
+import { Codeforces } from "../src/platform/codeforces.ts";
+
 import { Card } from "../src/cards/card.ts";
 import { Stats } from "../src/cards/stats.ts";
 
@@ -63,6 +65,9 @@ function validatePlatform(platform: string): Platform{
     switch(platform) {
     case "atcoder": {
       return new Atcoder();
+    }
+    case "codeforces": {
+      return new Codeforces();
     }
     default: {
       throw new Error("Platform not supported");

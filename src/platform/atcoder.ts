@@ -41,7 +41,4 @@ export class Atcoder extends Platform {
     async fetchCompetitionHistory(url: string): Promise<Competition[]> {
         return await [new Competition(new Date(), true, "contest_jp")];
     }
-
-    //Profile Setters
-
 }
