@@ -17,10 +17,10 @@ export abstract class Platform {
         const bands = Array.from(this.platform_rating_bands.keys()).sort((a, b) => a - b);
         for (let i = 0; i < bands.length; i++) {
             if (rating <= bands[i]) {
-                return this.platform_rating_bands.get(bands[i-1])?.color ?? "#000000";
+                return this.platform_rating_bands.get(bands[i-1])?.colour ?? "#000000";
             }
         }
-        return this.platform_rating_bands.get(bands[bands.length-1])?.color ?? "#000000"; // If rank is higher than the highest
+        return this.platform_rating_bands.get(bands[bands.length-1])?.colour ?? "#000000"; // If rank is higher than the highest
     }
 
     // Stats rank ring degrees calculation

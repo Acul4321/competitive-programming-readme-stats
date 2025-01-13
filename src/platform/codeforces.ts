@@ -4,16 +4,16 @@ import { DOMParser } from "jsr:@b-fuze/deno-dom";
 export class Codeforces extends Platform {
     public override platform_name: string = "Codeforces";
     protected override platform_rating_bands: Map<number, Record<string, string>> = new Map([
-        [0, { name: "Newbie", color: "#CCCCCC" }],
-        [1200, { name: "Pupil", color: "#B2FA81" }],
-        [1400, { name: "Specialist", color: "#A2DABC" }],
-        [1600, { name: "Expert", color: "#ACACFB" }],
-        [1900, { name: "Candidate Master", color: "#E292FB" }],
-        [2100, { name: "Master", color: "#EECD8F" }],
-        [2300, { name: "International Master", color: "#EABD62" }],
-        [2400, { name: "Grandmaster", color: "#DD7F7B" }],
-        [2600, { name: "International Grandmaster", color: "#D6493E" }],
-        [3000, { name: "Legendary Grandmaster", color: "#8D1F12" }]
+        [0, { name: "Newbie", colour: "#CCCCCC" }],
+        [1200, { name: "Pupil", colour: "#B2FA81" }],
+        [1400, { name: "Specialist", colour: "#A2DABC" }],
+        [1600, { name: "Expert", colour: "#ACACFB" }],
+        [1900, { name: "Candidate Master", colour: "#E292FB" }],
+        [2100, { name: "Master", colour: "#EECD8F" }],
+        [2300, { name: "International Master", colour: "#EABD62" }],
+        [2400, { name: "Grandmaster", colour: "#DD7F7B" }],
+        [2600, { name: "International Grandmaster", colour: "#D6493E" }],
+        [3000, { name: "Legendary Grandmaster", colour: "#8D1F12" }]
     ]);
     constructor() {
         super("https://codeforces.com/profile/");
