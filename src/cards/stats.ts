@@ -42,7 +42,7 @@ export class Stats extends Card {
     }
 
     protected renderTitle(): string {
-        return `<div id="title">${this.platform.profile.getId()}'s Atcoder Stats</div>`;
+        return `<div id="title">${this.platform.profile.getId()}'s ${this.platform.platform_name} Stats</div>`;
     }
     protected renderBody(): string {
         return `

@@ -2,6 +2,7 @@ import { Platform,Profile,Competition } from "./platform.ts";
 import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
 export class Codeforces extends Platform {
+    public override platform_name: string = "Codeforces";
     protected override platform_rating_bands: Map<number, Record<string, string>> = new Map([
         [0, { name: "Newbie", color: "#CCCCCC" }],
         [1200, { name: "Pupil", color: "#B2FA81" }],

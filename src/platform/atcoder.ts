@@ -2,6 +2,7 @@ import { Platform, Profile, Competition } from "./platform.ts";
 import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
 export class Atcoder extends Platform {
+    public override platform_name: string = "Atcoder";
     protected override platform_rating_bands: Map<number, Record<string, string>> = new Map([
         [0, { name: "Grey", color: "#808080" }],
         [400, { name: "Brown", color: "#804000" }],
