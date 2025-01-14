@@ -42,6 +42,8 @@ export class Codeforces extends Platform {
                 break;
             }
         }
+
+        const competition_history: Competition[] = await this.fetchCompetitionHistory(username);
         
         return new Profile(
             username,
@@ -49,7 +51,8 @@ export class Codeforces extends Platform {
             parseInt(rating),
             parseInt(highest_rating),
             parseInt(rated_matches),
-            new Date(last_competed)
+            new Date(last_competed),
+            competition_history
         );
     }
 

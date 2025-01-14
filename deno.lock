@@ -10,6 +10,7 @@
     "jsr:@denosaurs/wait@0.2.2": "0.2.2",
     "jsr:@oak/commons@1": "1.0.0",
     "jsr:@oak/oak@^17.1.4": "17.1.4",
+    "jsr:@std/assert@*": "1.0.10",
     "jsr:@std/assert@0.217": "0.217.0",
     "jsr:@std/assert@1": "1.0.10",
     "jsr:@std/assert@~0.213.1": "0.213.1",

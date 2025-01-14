@@ -28,7 +28,6 @@ export abstract class Card {
     }
 
     protected validateDimentions(width:number,height:number): number[] {
-
         return [width, height];
     }
 

@@ -29,11 +29,6 @@ let use_rank_colour: boolean;
 //
 // routes
 //
-
-router.get("/", (ctx) => {
-  ctx.response.body = 'Welcome to The Competitive Programming Readme Stats \nThe Supported Platforms Include: \natcoder \n \nThe Types of Cards are:\nstats \n \nThe Command Structure is:\n/{platform}/{type}/{username}?{optionalPeram}'
-})
-
 router.get("/:platform/:type/:username", async (ctx) => {
   ctx.response.type = "image/svg+xml";  // Set content type for SVG
   
@@ -43,9 +38,8 @@ router.get("/:platform/:type/:username", async (ctx) => {
   //validate platform
   platform = validatePlatform(ctx.params.platform);
 
-  // init profile and competition history
+  // init profile
   platform.profile = await platform.fetchProfile(ctx.params.username)
-  platform.profile.competition_history = await platform.fetchCompetitionHistory(ctx.params.username);
   
   //validate type
   type = validateType(ctx.params.type);

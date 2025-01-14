@@ -29,13 +29,16 @@ export class Atcoder extends Platform {
         const rated_matches = doc.querySelectorAll("table")[1].querySelectorAll("td")[3].textContent.trim();
         const last_competed = doc.querySelectorAll("table")[1].querySelectorAll("td")[4].textContent.trim();
 
+        const competition_history: Competition[] = await this.fetchCompetitionHistory(username);
+
         return new Profile(
             username,
             parseInt(rank),
             parseInt(rating),
             parseInt(highest_rating),
             parseInt(rated_matches),
-            new Date(last_competed)
+            new Date(last_competed),
+            competition_history
         );
     }
 
