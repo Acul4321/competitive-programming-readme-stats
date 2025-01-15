@@ -51,8 +51,7 @@ export class Profile {
     protected highest_rating?: number;
     protected rated_matches?: number;
     protected last_competed?: Date;
-    
-    public competition_history: Competition[] = [];
+    protected competition_history?: Competition[] = [];
 
     constructor(
         id: string,
@@ -60,7 +59,8 @@ export class Profile {
         rating?: number,
         highest_rating?: number,
         rated_matches?: number,
-        last_competed?: Date
+        last_competed?: Date,
+        competition_history?: Competition[]
     ) {
         this.id = id;
         this.rank = rank;
@@ -68,6 +68,7 @@ export class Profile {
         this.highest_rating = highest_rating;
         this.rated_matches = rated_matches;
         this.last_competed = last_competed;
+        this.competition_history = competition_history;
     }
 
     // Getters
@@ -90,7 +91,7 @@ export class Profile {
         return this.last_competed ?? new Date();
     }
     getCompetitionHistory(): Competition[] {
-        return this.competition_history;
+        return this.competition_history ?? [];
     }
 }
 

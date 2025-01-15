@@ -29,29 +29,30 @@ let use_rank_colour: boolean;
 //
 // routes
 //
-
-router.get("/", (ctx) => {
-  ctx.response.body = 'Welcome to The Competitive Programming Readme Stats \nThe Supported Platforms Include: \natcoder \n \nThe Types of Cards are:\nstats \n \nThe Command Structure is:\n/{platform}/{type}/{username}?{optionalPeram}'
-})
-
 router.get("/:platform/:type/:username", async (ctx) => {
-  ctx.response.type = "image/svg+xml";  // Set content type for SVG
+  try {
+    ctx.response.type = "image/svg+xml";  // Set content type for SVG
   
-  //query perameter setup
-  optionalQueryParams(ctx.request.url);
+    //query perameter setup
+    optionalQueryParams(ctx.request.url);
 
-  //validate platform
-  platform = validatePlatform(ctx.params.platform);
+    //validate platform
+    platform = validatePlatform(ctx.params.platform);
 
-  // init profile and competition history
-  platform.profile = await platform.fetchProfile(ctx.params.username)
-  platform.profile.competition_history = await platform.fetchCompetitionHistory(ctx.params.username);
-  
-  //validate type
-  type = validateType(ctx.params.type);
-  
-  //render the card
-  ctx.response.body = type.render();
+    // init profile
+    platform.profile = await platform.fetchProfile(ctx.params.username)
+    
+    //validate type
+    type = validateType(ctx.params.type);
+    
+    //render the card
+    ctx.response.body = type.render();
+
+  } catch (e) {
+    console.error("Unhandled error:", e);
+    ctx.response.status = 500;
+    ctx.response.body = "Internal Server Error";
+  }
 });
 
 const app = new Application();
@@ -65,7 +66,7 @@ await app.listen({ port: parseInt(PORT) });
 //functions
 //
 
-function validatePlatform(platform: string): Platform{
+export function validatePlatform(platform: string): Platform{
     switch(platform) {
     case "atcoder": {
       return new Atcoder();

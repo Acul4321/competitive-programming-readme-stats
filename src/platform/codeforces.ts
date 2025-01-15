@@ -20,81 +20,94 @@ export class Codeforces extends Platform {
     }
 
     async fetchProfile(username: string): Promise<Profile> {
-        //get source
-        const source = await this.getSourceHTML(username);
-        let doc = new DOMParser().parseFromString(source, 'text/html');
+        try{
+            //get source
+            const source = await this.getSourceHTML(username);
+            let doc = new DOMParser().parseFromString(source, 'text/html');
 
-        // populate profile
-        const rating = doc.querySelectorAll("ul")[3].querySelectorAll("li")[0].querySelectorAll("span")[0].textContent.trim();
-        const highest_rating = doc.querySelectorAll("ul")[3].querySelectorAll("li")[0].querySelectorAll("span")[1].textContent.trim().match(/\d+$/)?.[0] ?? rating;
+            // populate profile
+            const rating = doc.querySelectorAll("ul")[3].querySelectorAll("li")[0].querySelectorAll("span")[0].textContent.trim();
+            const highest_rating = doc.querySelectorAll("ul")[3].querySelectorAll("li")[0].querySelectorAll("span")[1].textContent.trim().match(/\d+$/)?.[0] ?? rating;
 
-        const contestSource = (await fetch("https://codeforces.com/contests/with/" + username)).text();
-        doc = new DOMParser().parseFromString(await contestSource, 'text/html');
-        const rated_matches = doc.querySelectorAll("table")[5].querySelectorAll("tr")[1].querySelectorAll("td")[0].textContent.trim();
-        const last_competed = doc.querySelectorAll("table")[5].querySelectorAll("tr")[1].querySelectorAll("td")[2].textContent.trim();
+            const contestSource = (await fetch("https://codeforces.com/contests/with/" + username)).text();
+            doc = new DOMParser().parseFromString(await contestSource, 'text/html');
+            const rated_matches = doc.querySelectorAll("table")[5].querySelectorAll("tr")[1].querySelectorAll("td")[0].textContent.trim();
+            const last_competed = doc.querySelectorAll("table")[5].querySelectorAll("tr")[1].querySelectorAll("td")[2].textContent.trim();
 
-        const rankResponse = await fetch("https://codeforces.com/api/user.ratedList?activeOnly=false&includeRetired=true");
-        const rank_json =  await rankResponse.json();
-        let rank;
-        for( let i = 0; i < rank_json.result.length; i++) {
-            if(rank_json.result[i].handle == username) {
-                rank = i+1;
-                break;
+            const rankResponse = await fetch("https://codeforces.com/api/user.ratedList?activeOnly=false&includeRetired=true");
+            const rank_json =  await rankResponse.json();
+            let rank;
+            for( let i = 0; i < rank_json.result.length; i++) {
+                if(rank_json.result[i].handle == username) {
+                    rank = i+1;
+                    break;
+                }
             }
+
+            const competition_history: Competition[] = await this.fetchCompetitionHistory(username);
+
+            return new Profile(
+                username,
+                rank,
+                parseInt(rating),
+                parseInt(highest_rating),
+                parseInt(rated_matches),
+                new Date(last_competed),
+                competition_history
+            );
+        } catch (e) {
+            console.error(`Error fetching profile for ${username}:`, e);
+            throw e;
         }
-        
-        return new Profile(
-            username,
-            rank,
-            parseInt(rating),
-            parseInt(highest_rating),
-            parseInt(rated_matches),
-            new Date(last_competed)
-        );
     }
 
     async fetchCompetitionHistory(username: string): Promise<Competition[]> {
-        const competitionHistory: Competition[] = [];
+        try {
+            const competitionHistory: Competition[] = [];
 
-        let old_rating: number = 0;
+            let old_rating: number = 0;
 
-        const contestSource = (await fetch("https://codeforces.com/contests/with/" + username + "?type=all")).text();
-        const doc = new DOMParser().parseFromString(await contestSource, 'text/html');
+            const contestSource = (await fetch("https://codeforces.com/contests/with/" + username + "?type=all")).text();
+            const doc = new DOMParser().parseFromString(await contestSource, 'text/html');
 
-        const rows = Array.from(doc.querySelectorAll("table")[5].querySelectorAll("tr")).reverse();
-        for(const row of rows) {
-            let contest_name = '';
-            let date = new Date();
-            let is_rated = false;
-            let rank = 0;
-            const performance = -1;
-            let new_rating = 0;
-            
-            const cells = row.querySelectorAll("td");
-            for(let i = cells.length - 1; i >= 0; i--){ //this is a workaround to get the data from the table
-                const cell = cells[i];
-                if(i == 1){
-                    contest_name = cell.textContent.trim();
-                } else if (i == 2){
-                    date = new Date(cell.textContent.trim());
-                } else if (i == 3){
-                    if(cell.textContent.trim() == '—'){
-                        is_rated = false;
-                        competitionHistory.push(new Competition(contest_name, date, is_rated));
-                        continue;
-                    } else{
-                        is_rated = true;
-                        rank = parseInt(cell.textContent.trim());
+            const rows = Array.from(doc.querySelectorAll("table")[5].querySelectorAll("tr")).reverse();
+            for(const row of rows) {
+                let contest_name = '';
+                let date = new Date();
+                let is_rated = false;
+                let rank = 0;
+                const performance = -1;
+                let new_rating = 0;
+
+                const cells = row.querySelectorAll("td");
+                for(let i = cells.length - 1; i >= 0; i--){ //this is a workaround to get the data from the table
+                    const cell = cells[i];
+                    if(i == 1){
+                        contest_name = cell.textContent.trim();
+                    } else if (i == 2){
+                        date = new Date(cell.textContent.trim());
+                    } else if (i == 3){
+                        if(cell.textContent.trim() == '—'){
+                            is_rated = false;
+                            competitionHistory.push(new Competition(contest_name, date, is_rated));
+                            continue;
+                        } else{
+                            is_rated = true;
+                            rank = parseInt(cell.textContent.trim());
+                        }
+                    } else if (i == 6){
+                        new_rating = parseInt(cell.textContent.trim());
                     }
-                } else if (i == 6){
-                    new_rating = parseInt(cell.textContent.trim());
+                }
+                if (is_rated) {
+                    competitionHistory.push(new Competition(contest_name, date, is_rated, rank, performance, old_rating, new_rating));
+                    old_rating = new_rating;
                 }
             }
-            if (is_rated) {
-                competitionHistory.push(new Competition(contest_name, date, is_rated, rank, performance, old_rating, new_rating));
-                old_rating = new_rating;
-            }
-        }
-        return competitionHistory;
+            return competitionHistory;
+        } catch (e) {
+            console.error(`Error fetching competition history for ${username}:`, e);
+            throw e;
         }
     }
+}
