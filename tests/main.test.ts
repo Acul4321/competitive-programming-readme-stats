@@ -1,4 +1,4 @@
-import { assertEquals } from "jsr:@std/assert";
+import { assertEquals } from "@std/assert/equals";
 
 Deno.test("deno working test", () => {
   const x = 1 + 2;
