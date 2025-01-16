@@ -1,4 +1,4 @@
-import { Platform, Profile, Competition } from "./platform.ts";
+import { Platform, Profile, Competition, Submission } from "./platform.ts";
 import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
 export class Atcoder extends Platform {
@@ -32,6 +32,8 @@ export class Atcoder extends Platform {
 
             const competition_history: Competition[] = await this.fetchCompetitionHistory(username);
 
+            const subbmissions: Submission[] = await this.fetchSubmissions(username);
+
             return new Profile(
                 username,
                 parseInt(rank),
@@ -39,7 +41,8 @@ export class Atcoder extends Platform {
                 parseInt(highest_rating),
                 parseInt(rated_matches),
                 new Date(last_competed),
-                competition_history
+                competition_history,
+                subbmissions
             );
         } catch (e) {
             console.error(`Error fetching profile for ${username}:`, e);
@@ -80,5 +83,9 @@ export class Atcoder extends Platform {
             console.error(`Error fetching competition history for ${username}:`, e);
             throw e;
         }
+    }
+
+    override async fetchSubmissions(username: string): Promise<Submission[]> {
+      
     }
 }
