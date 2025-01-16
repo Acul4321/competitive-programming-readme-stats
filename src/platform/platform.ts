@@ -157,7 +157,8 @@ export class Submission {
 
 export enum submissionType {
     CONTESTANT = "contestant",
-    PRACTICE = "practice"
+    PRACTICE = "practice",
+    NA = "N/A" //if not known
 }
 
 export enum Result {

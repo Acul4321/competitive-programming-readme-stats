@@ -139,7 +139,6 @@ export class Codeforces extends Platform {
                 );
                 submissions.push(submission);
             }
-            console.log(submissions);
     
             return submissions;
         } catch (e) {

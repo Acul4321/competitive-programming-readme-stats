@@ -1,4 +1,4 @@
-import { Platform, Profile, Competition, Submission } from "./platform.ts";
+import { Platform, Profile, Competition, Submission, Result, submissionType } from "./platform.ts";
 import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
 export class Atcoder extends Platform {
@@ -86,6 +86,34 @@ export class Atcoder extends Platform {
     }
 
     override async fetchSubmissions(username: string): Promise<Submission[]> {
-      
+        try {
+            const submissions: Submission[] = [];
+    
+            const contentSource = await fetch("https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=" + username + "&from_second=0");
+            const submission_json = await contentSource.json();
+    
+            for (const sub of submission_json) {
+                const submission = new Submission(
+                    new Date(sub.epoch_second * 1000),
+                    submissionType.NA,  //no clue to get state
+                    sub.result === "AC" ? Result.AC :
+                        sub.result === "TLE" ? Result.TLE :
+                        sub.result === "MLE" ? Result.MLE :
+                        sub.result === "CE" ? Result.CE :
+                        sub.result === "RE" ? Result.RE :
+                        sub.result === "OLE" ? Result.OLE :
+                        sub.result === "WA" ? Result.WA : Result.IE,
+                    sub.language,
+                    sub.point,
+                    (sub.problem_id.split('_')[1]).toUpperCase()
+                );
+                submissions.push(submission);
+            }
+    
+            return submissions;
+        } catch (e) {
+            console.error(`Error fetching submission data for ${username}:`, e);
+            throw e;
+        }
     }
 }
