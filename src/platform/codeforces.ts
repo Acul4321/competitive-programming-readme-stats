@@ -1,4 +1,4 @@
-import { Platform,Profile,Competition } from "./platform.ts";
+import { Platform,Profile,Competition, Submission, Result, submissionType } from "./platform.ts";
 import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
 export class Codeforces extends Platform {
@@ -43,8 +43,12 @@ export class Codeforces extends Platform {
                     break;
                 }
             }
-
+            
+            //competition history
             const competition_history: Competition[] = await this.fetchCompetitionHistory(username);
+
+            //submissions
+            const submissions: Submission[] = await this.fetchSubmissions(username);
 
             return new Profile(
                 username,
@@ -53,7 +57,8 @@ export class Codeforces extends Platform {
                 parseInt(highest_rating),
                 parseInt(rated_matches),
                 new Date(last_competed),
-                competition_history
+                competition_history,
+                submissions
             );
         } catch (e) {
             console.error(`Error fetching profile for ${username}:`, e);
@@ -108,6 +113,37 @@ export class Codeforces extends Platform {
         } catch (e) {
             console.error(`Error fetching competition history for ${username}:`, e);
             throw e;
+        }
+    }
+
+    override async fetchSubmissions(username: string): Promise<Submission[]> {
+        try {
+            const submissions: Submission[] = [];
+    
+            const contentSource = await fetch("https://codeforces.com/api/user.status?handle=" + username);
+            const submission_json = await contentSource.json();
+    
+            for (const sub of submission_json.result) {
+                const submission = new Submission(
+                    new Date(sub.creationTimeSeconds * 1000),
+                    sub.author.participantType === "CONTESTANT" ? submissionType.CONTESTANT : submissionType.PRACTICE,
+                    sub.verdict === "OK" ? Result.AC : 
+                        sub.verdict === "TIME_LIMIT_EXCEEDED" ? Result.TLE :
+                        sub.verdict === "MEMORY_LIMIT_EXCEEDED" ? Result.MLE :
+                        sub.verdict === "COMPILATION_ERROR" ? Result.CE :
+                        sub.verdict === "RUNTIME_ERROR" ? Result.RE :
+                        sub.verdict === "WRONG_ANSWER" ? Result.WA : Result.IE,
+                    sub.programmingLanguage,
+                    sub.problem.rating || 0,
+                    sub.problem.index
+                );
+                submissions.push(submission);
+            }
+    
+            return submissions;
+        } catch (e) {
+            console.error(`Error fetching submission data for ${username}:`, e);
+            throw e;   
         }
     }
 }
