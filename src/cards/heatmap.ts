@@ -1,4 +1,3 @@
-import { randomInt } from "node:crypto";
 import { themes,Theme } from "../../themes/themes.ts";
 import { Result } from "../platform/platform.ts";
 import { Platform } from "../platform/platform.ts";
@@ -131,7 +130,7 @@ export class Heatmap extends Card {
 
         // Calculate days of each square
         const days = this.getDaysBetweenDates(past_date, today);
-        let freq: number[] = new Array(this.square_number + this.day_of_the_week).fill(0);
+        const freq: number[] = new Array(this.square_number + this.day_of_the_week).fill(0);
         const data: Date[] = []; // For either submission dates or competition dates
 
         // Populate data with days of AC submissions or competition participations
