@@ -2,7 +2,7 @@ import { randomInt } from "node:crypto";
 import { themes,Theme } from "../../themes/themes.ts";
 import { Result } from "../platform/platform.ts";
 import { Platform } from "../platform/platform.ts";
-import { hexToRgb, RGB } from "../utils.ts";
+import { rgbToHex,hexToRgb, RGB } from "../utils.ts";
 import { Card } from "./card.ts";
 
 export class Heatmap extends Card {
@@ -11,7 +11,7 @@ export class Heatmap extends Card {
     private square_scale: number = .055;
     private square_gap: number = 3;
     private data_freq:Array<number> = []; //the number of contest participated or AC submissions on that day
-    private colour_count: number = 7;//how many colours the palette will have
+    private colour_count: number = 5;//how many colours the palette will have
     private colour_palette:Map<number,string> = new Map<number,string>();
 
     protected default_width: number = 800;
@@ -46,12 +46,20 @@ export class Heatmap extends Card {
         this.day_of_the_week = new Date().getDay();//current day
         this.data_freq = this.calcDataFreq();
         this.colour_palette = this.createPalette(this.theme.text_color); // colour peram will be middle value with 3 above and below in tone
-        console.log(this.colour_palette)
     }
 
     createPalette(base_hex_colour: string): Map<number,string> {
         const palette = new Map<number,string>();
         
+        //calculate empty square colour
+        const bg_rgb = hexToRgb(this.theme.bg_color);
+        const darker_bg_rgb: RGB = {
+            r: bg_rgb.r * 2,
+            g: bg_rgb.g * 2,
+            b: bg_rgb.b * 2
+        };
+        palette.set(0,rgbToHex(darker_bg_rgb));
+
         // Convert base color to RGB
         const base_rgb: RGB = hexToRgb(base_hex_colour);
         
@@ -69,7 +77,7 @@ export class Heatmap extends Card {
         };
     
         // Calculate step sizes
-        const steps_to_base = 3;  // 3 steps from lighter to base
+        const steps_to_base = Math.ceil((this.colour_count-1)/2);  // 3 steps from lighter to base
         const r_step1 = (base_rgb.r - lighter_rgb.r) / steps_to_base;
         const g_step1 = (base_rgb.g - lighter_rgb.g) / steps_to_base;
         const b_step1 = (base_rgb.b - lighter_rgb.b) / steps_to_base;
@@ -77,39 +85,43 @@ export class Heatmap extends Card {
         const r_step2 = (darker_rgb.r - base_rgb.r) / steps_to_base;
         const g_step2 = (darker_rgb.g - base_rgb.g) / steps_to_base;
         const b_step2 = (darker_rgb.b - base_rgb.b) / steps_to_base;
-    
+
         // generate palette colors
-        for(let i = 0; i < 7; i++) {
+        for(let i = 0; i < this.colour_count; i++) {
             let r, g, b;
-            if(i < 3) {
+            if(i < steps_to_base) {
                 r = Math.floor(lighter_rgb.r + (r_step1 * i));
                 g = Math.floor(lighter_rgb.g + (g_step1 * i));
                 b = Math.floor(lighter_rgb.b + (b_step1 * i));
-            } else if(i === 3) {
+            } else if(i === steps_to_base) {
                 r = base_rgb.r;
                 g = base_rgb.g;
                 b = base_rgb.b;
             } else {
-                r = Math.floor(base_rgb.r + (r_step2 * (i-3)));
-                g = Math.floor(base_rgb.g + (g_step2 * (i-3)));
-                b = Math.floor(base_rgb.b + (b_step2 * (i-3)));
+                r = Math.floor(base_rgb.r + (r_step2 * (i-steps_to_base)));
+                g = Math.floor(base_rgb.g + (g_step2 * (i-steps_to_base)));
+                b = Math.floor(base_rgb.b + (b_step2 * (i-steps_to_base)));
             }
             
             // convert RGB to hex and store in map
-            const hex = '#' + [r, g, b]
-                .map(x => Math.max(0, Math.min(255, x))
-                .toString(16)
-                .padStart(2, '0'))
-                .join('');
-                
-            palette.set(i, hex);
+            const rgb: RGB = {
+                r: Math.max(0, Math.min(255, r)),
+                g: Math.max(0, Math.min(255, g)), 
+                b: Math.max(0, Math.min(255, b))
+            };
+            
+            palette.set(i+1, rgbToHex(rgb));
         }
     
         return palette;
     }
 
     getPaletteColour(occurrences: number): string {
-        return this.colour_palette.get(randomInt(0,6)) ?? this.theme.text_color;
+        // return this.colour_palette.get(randomInt(0,this.colour_count-1)) ?? this.theme.text_color;
+        if (occurrences > this.colour_palette.size-1) {
+            occurrences = this.colour_palette.size-1;
+        }
+        return this.colour_palette.get(occurrences) ?? '#'+this.theme.title_color;
     }
     
     calcDataFreq(): number[] {
