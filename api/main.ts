@@ -29,7 +29,6 @@ let use_rank_colour: boolean;
 
 //heatmap Card
 let data_type: string;
-let yearly: boolean;
 
 //
 // routes
@@ -102,7 +101,6 @@ function validateType(type: string): Card {
       return new Heatmap(
         platform,
         data_type,
-        yearly,
         theme,
         show_icons,
         hide_border,
@@ -142,5 +140,4 @@ function optionalQueryParams(url: URL): void {
 
   //heatmap
   data_type = queryParam.get('data_type') === 'contest' ? 'contest' : 'submission';
-  yearly = queryParam.get('yearly') === 'true' ? true : false;
 }
