@@ -128,6 +128,29 @@ export class Competition {
         this.old_rating = old_rating;
         this.new_rating = new_rating;
     }
+
+    // Getters
+    getContestName(): string {
+        return this.contest_name;
+    }
+    getDate(): Date {
+        return this.date;
+    }
+    getIsRated(): boolean {
+        return this.is_rated;
+    }
+    getRank(): number | undefined {
+        return this.rank;
+    }
+    getPerformance(): number | undefined {
+        return this.performance;
+    }
+    getOldRating(): number | undefined {
+        return this.old_rating;
+    }
+    getNewRating(): number | undefined {
+        return this.new_rating;
+    }
 }
 
 export class Submission {
@@ -152,6 +175,26 @@ export class Submission {
         this.language = language;
         this.points = points;
         this.problem_index = problem_index;
+    }
+
+    // Getters
+    getSubmissionTime(): Date {
+        return this.submission_time;
+    }
+    getType(): submissionType {
+        return this.type;
+    }
+    getResult(): Result {
+        return this.result;
+    }
+    getLanguage(): Language {
+        return this.language;
+    }
+    getPoints(): number {
+        return this.points;
+    }
+    getProblemIndex(): string {
+        return this.problem_index;
     }
 }
 

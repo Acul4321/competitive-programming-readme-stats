@@ -1,4 +1,5 @@
 import { themes,Theme } from "../../themes/themes.ts";
+import { Result } from "../platform/platform.ts";
 import { Platform } from "../platform/platform.ts";
 import { Card } from "./card.ts";
 
@@ -7,6 +8,7 @@ export class Heatmap extends Card {
     private day_of_the_week:number = -1; //1-7 for the extra days added on to the year
     private square_scale: number = .055;
     private square_gap: number = 3;
+    private data_freq:Array<number> = []; //the number of contest participated or AC submissions on that day
 
     protected default_width: number = 800;
     protected default_height: number = 200;
@@ -36,8 +38,59 @@ export class Heatmap extends Card {
         if(border_radius == -1) {
             this.border_radius = 4.5;
         }
-
+        
         this.day_of_the_week = new Date().getDay();//current day
+        this.data_freq = this.calcDataFreq();
+    }
+    
+    calcDataFreq(): number[] {
+        const today: Date = new Date();
+        const past_date: Date = new Date(today);
+        past_date.setDate(today.getDate() - (this.day_of_the_week + this.square_number));
+
+        // Calculate days of each square
+        const days = this.getDaysBetweenDates(past_date, today);
+        let freq: number[] = new Array(this.square_number + this.day_of_the_week).fill(0);
+        const data: Date[] = []; // For either submission dates or competition dates
+
+        // Populate data with days of AC submissions or competition participations
+        if (this.data_type == "submission") {
+            for (const sub of this.platform.profile.getSubmissionHistory()) {
+                if (sub.getResult() == Result.AC) {
+                    data.push(sub.getSubmissionTime());
+                }
+            }
+        } else {
+            for (const cont of this.platform.profile.getCompetitionHistory()) {
+                data.push(cont.getDate());
+            }
+        }
+
+        // Loop through the data array and update the freq array
+        for (const date of data) {
+            for (const [index, day] of days.entries()) {
+                if (date.toDateString() === day.toDateString()) {
+                    freq[index]++;
+                    break;
+                }
+            }
+        }
+
+        return freq;
+    }
+
+    getDaysBetweenDates(startDate: Date, endDate: Date): Map<number, Date> {
+        const dates: Map<number, Date> = new Map();
+        const currentDate = new Date(startDate);
+        let index = 0;
+    
+        while (currentDate <= endDate) {
+            dates.set(index-1, new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+            index++;
+        }
+    
+        return dates;
     }
 
     protected renderTitle(): string {
@@ -59,14 +112,14 @@ export class Heatmap extends Card {
             translateY = (i % 7) * ((this.height*this.square_scale) + this.square_gap);
             translateX = Math.floor(i / 7) * ((this.height*this.square_scale) + this.square_gap);
             squares+=`
-            <div id="square" style="transform: translate(${translateX}px,${translateY}px)"></div>
+            <div id="square" style="transform: translate(${translateX}px,${translateY}px);background-color:${this.data_freq[i] > 0? "white" : "pink"}"></div>
             `;
         }
         for(let i=0;i<this.day_of_the_week;i++){ //days of current week at the end
             translateY = (i % 7) * ((this.height*this.square_scale) + this.square_gap);
             translateX = Math.floor((i + this.square_number) / 7) * ((this.height*this.square_scale) + this.square_gap);
             squares+=`
-            <div id="square" style="transform: translate(${translateX}px,${translateY}px)"></div>
+            <div id="square" style="transform: translate(${translateX}px,${translateY}px);background-color:${this.data_freq[i] > 0? "white" : "pink"}"></div>
             `;
         }
         return squares
@@ -119,10 +172,10 @@ export class Heatmap extends Card {
             #square {
                 width: ${this.height*this.square_scale}px;
                 height: ${this.height*this.square_scale}px;
-                background-color: pink; /* Example color */
                 margin-right: 5px; /* Adds right adjustment offset */
                 position: absolute /* stack Above Mult adjust
             }
         `;
     }
 }
+
