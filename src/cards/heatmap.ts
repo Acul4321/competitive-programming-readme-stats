@@ -131,26 +131,28 @@ export class Heatmap extends Card {
         // Calculate days of each square
         const days = this.getDaysBetweenDates(past_date, today);
         const freq: number[] = new Array(this.square_number + this.day_of_the_week).fill(0);
-        const data: Date[] = []; // For either submission dates or competition dates
+        const data: Map<string, number> = new Map(); // Map to store date and occurrences
 
         // Populate data with days of AC submissions or competition participations
         if (this.data_type == "submission") {
             for (const sub of this.platform.profile.getSubmissionHistory()) {
                 if (sub.getResult() == Result.AC) {
-                    data.push(sub.getSubmissionTime());
+                    const dateStr = sub.getSubmissionTime().toDateString();
+                    data.set(dateStr, (data.get(dateStr) ?? 0) + 1);
                 }
             }
         } else {
             for (const cont of this.platform.profile.getCompetitionHistory()) {
-                data.push(cont.getDate());
+                const dateStr = cont.getDate().toDateString();
+                data.set(dateStr, (data.get(dateStr) ?? 0) + 1);
             }
         }
 
-        // Loop through the data array and update the freq array
-        for (const date of data) {
+        // Loop through the data map and update the freq array
+        for (const [dateStr, count] of data.entries()) {
             for (const [index, day] of days.entries()) {
-                if (date.toDateString() === day.toDateString()) {
-                    freq[index]++;
+                if (dateStr === day.toDateString()) {
+                    freq[index-1] = count;
                     break;
                 }
             }
@@ -162,14 +164,13 @@ export class Heatmap extends Card {
     getDaysBetweenDates(startDate: Date, endDate: Date): Map<number, Date> {
         const dates: Map<number, Date> = new Map();
         const currentDate = new Date(startDate);
-        let index = 0;
+        let index = 1;
     
         while (currentDate <= endDate) {
             dates.set(index-1, new Date(currentDate));
             currentDate.setDate(currentDate.getDate() + 1);
             index++;
         }
-    
         return dates;
     }
 
