@@ -174,13 +174,22 @@ export class Heatmap extends Card {
         return dates;
     }
 
+
+
     protected renderTitle(): string {
-        return `<div id="title">${this.platform.profile.getId()}'s ${this.platform.platform_name} ${this.data_type}s</div>`;
+        return `
+            <div id="title" >${this.platform.profile.getId()}'s ${this.platform.platform_name} ${this.data_type}s</div>
+            <div id="palette-showcase">${this.displayShowcase()}</div>
+        `;
     }
     protected renderBody(): string {
         return `
             <div id="square-body">
                 ${this.displaySquares()}
+            </div>
+            <div id="label-body">
+                <div id="label-date">${this.displayDate()}</div>
+                <div id="label-month">${this.displayMonth()}</div>
             </div>
         `;
     }
@@ -189,21 +198,86 @@ export class Heatmap extends Card {
         let squares:string = "";
         let translateX:number;
         let translateY:number;
+        const startingX:number = 20;
+        const startingY:number = 0;
         for(let i=0;i<this.square_number;i++){ //weeks for majority of days
             translateY = (i % 7) * ((this.height*this.square_scale) + this.square_gap);
             translateX = Math.floor(i / 7) * ((this.height*this.square_scale) + this.square_gap);
             squares+=`
-            <div id="square" style="transform: translate(${translateX}px,${translateY}px);background-color:${this.getPaletteColour(this.data_freq[i])}"></div>
+            <div id="square" style="transform: translate(${translateX + startingX}px,${translateY + startingY}px);background-color:${this.getPaletteColour(this.data_freq[i])}"></div>
             `;
         }
         for(let i=0;i<this.day_of_the_week;i++){ //days of current week at the end
             translateY = (i % 7) * ((this.height*this.square_scale) + this.square_gap);
             translateX = Math.floor((i + this.square_number) / 7) * ((this.height*this.square_scale) + this.square_gap);
             squares+=`
-            <div id="square" style="transform: translate(${translateX}px,${translateY}px);background-color:${this.getPaletteColour(this.data_freq[i])}"></div>
+            <div id="square" style="transform: translate(${translateX + startingX}px,${translateY + startingY}px);background-color:${this.getPaletteColour(this.data_freq[i])}"></div>
             `;
         }
         return squares
+    }
+
+    displayShowcase(): string{
+        let palette_showcase : string = "";
+        const showcase_start: number = this.width/5;
+        for(let i = 0;i < this.colour_palette.size+2;i++){ //+2 for labels at end and start
+            if(i == 0) {
+                palette_showcase += `
+                    <div id="label" style="transform: translate(-${showcase_start-(i*15) + 30}px,-10px)">Less</div>
+                `;
+            } else if( i == this.colour_palette.size+1){
+                palette_showcase += `
+                    <div id="label" style="transform: translate(-${showcase_start-(i*15) + 15}px,-10px)">More</div>
+            `;   
+            }
+            palette_showcase += `
+            <div id="square" style="background-color:${this.colour_palette.get(i)};transform: translate(-${showcase_start-(i*15)}px,-5px)"></div>
+            `;   
+        }
+
+
+        return palette_showcase;
+    }
+
+    displayDate() : string {
+        let return_date: string = "";
+        const date_labels: Array<string> = ["Tue", "Thu", "Sat"];
+
+        for(let i=0;i<date_labels.length;i++){
+            return_date += `
+                <div id="label" style="transform:translate(-5px,${(i*27)+10}px)">${date_labels[i]}</div>
+            `;
+        }
+
+        return return_date
+    }
+
+    displayMonth(): string {
+        let return_month: string = "";
+        const month: Map<number, string> = new Map([
+            [0, "Jan"], [1, "Feb"], [2, "Mar"], [3, "Apr"], [4, "May"], [5, "Jun"],
+            [6, "Jul"], [7, "Aug"], [8, "Sep"], [9, "Oct"], [10, "Nov"], [11, "Dec"]
+        ]);
+
+        const today: Date = new Date();
+        const past_date: Date = new Date(today);
+        past_date.setDate(today.getDate() - (this.day_of_the_week + this.square_number));
+
+        let currentMonth = -1;
+        const days = this.getDaysBetweenDates(past_date, today);
+
+        for (const [index, day] of days.entries()) {
+            const monthIndex = day.getMonth();
+            if (monthIndex !== currentMonth && day.getDate() <= 7) {
+                currentMonth = monthIndex;
+                const translateX = Math.floor(index / 7) * ((this.height * this.square_scale) + this.square_gap);
+                return_month += `
+                    <div id="label" style="transform:translate(${translateX + 20}px,100px)">${month.get(monthIndex)}</div>
+                `;
+            }
+        }
+
+        return return_month;
     }
 
     protected override Style(): string {
@@ -256,6 +330,21 @@ export class Heatmap extends Card {
                 margin-right: 5px; /* Adds right adjustment offset */
                 position: absolute /* stack Above Mult adjust
             }
-        `;
+            
+            #title, #palette-showcase {
+                display: inline-flex; /* Ensures the div content remains inline */
+            }
+
+            #title-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center; /* Ensures proper vertical alignment if needed */
+            }
+            
+            #label { 
+                font-size: ${this.height/15}px;
+                position: absolute;
+            }
+                `;
     }
 }
