@@ -8,6 +8,7 @@ import { Codeforces } from "../src/platform/codeforces.ts";
 
 import { Card } from "../src/cards/card.ts";
 import { Stats } from "../src/cards/stats.ts";
+import { Heatmap } from "../src/cards/heatmap.ts";
 
 const PORT:string = Deno.env.get("SERVER_PORT") ?? "8000";
 const router = new Router();
@@ -25,6 +26,9 @@ let border_radius: number;
 
 //stats Card
 let use_rank_colour: boolean;
+
+//heatmap Card
+let data_type: string;
 
 //
 // routes
@@ -93,6 +97,17 @@ function validateType(type: string): Card {
         height, 
         border_radius);
     }
+    case "heatmap": {
+      return new Heatmap(
+        platform,
+        data_type,
+        theme,
+        show_icons,
+        hide_border,
+        width,
+        height,
+        border_radius);
+    }
     default: {
       throw new Error("Card type not supported");
     }
@@ -119,5 +134,10 @@ function optionalQueryParams(url: URL): void {
   border_radius = parseFloat(queryParam.get('border_radius') ?? '-1');
   show_icons = queryParam.get('show_icons') === 'false' ? false : true;
   hide_border = queryParam.get('hide_border') === 'true' ? true : false;
+
+  //stats card
   use_rank_colour = queryParam.get('use_rank_colour') === 'true' ? true : false;
+
+  //heatmap
+  data_type = queryParam.get('data_type') === 'contest' ? 'contest' : 'submission';
 }

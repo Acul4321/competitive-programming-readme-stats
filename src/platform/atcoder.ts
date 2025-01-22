@@ -62,7 +62,6 @@ export class Atcoder extends Platform {
             for(const row of rows) {
                 // Extract cells
                 const cells = row.querySelectorAll("td");
-
                 const contest_name: string = cells[1].textContent.trim();
                 const date: Date = new Date(cells[0].textContent);
                 const rank: number = parseInt(cells[2].textContent.trim());
@@ -88,26 +87,42 @@ export class Atcoder extends Platform {
     override async fetchSubmissions(username: string): Promise<Submission[]> {
         try {
             const submissions: Submission[] = [];
-    
-            const contentSource = await fetch("https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=" + username + "&from_second=0");
-            const submission_json = await contentSource.json();
-    
-            for (const sub of submission_json) {
-                const submission = new Submission(
-                    new Date(sub.epoch_second * 1000),
-                    submissionType.NA,  //no clue to get state
-                    sub.result === "AC" ? Result.AC :
-                        sub.result === "TLE" ? Result.TLE :
-                        sub.result === "MLE" ? Result.MLE :
-                        sub.result === "CE" ? Result.CE :
-                        sub.result === "RE" ? Result.RE :
-                        sub.result === "OLE" ? Result.OLE :
-                        sub.result === "WA" ? Result.WA : Result.IE,
-                    sub.language,
-                    sub.point,
-                    (sub.problem_id.split('_')[1]).toUpperCase()
-                );
-                submissions.push(submission);
+            const duplicates: Set<number> = new Set();
+            
+            // limitation with api(limits submittions retrivible at a time)
+            // go through atcoders start year to the current year monthly
+            const interval_second: number = 2629743*4; //4 months
+            const end_second:number = Math.floor(((new Date().getTime()) / 1000)+100);
+            let start_second: number = await (await fetch("https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=" + username + "&from_second=0"))
+                .json()
+                .then(data => data[0]?.epoch_second ?? 0);
+            let query_second:number = start_second + interval_second
+            while (start_second <= end_second){
+                const contentSource = await fetch("https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=" + username + "&from_second="+ start_second +"&to_second=" + query_second);
+                const submission_json = await contentSource.json();
+                
+                for (const sub of submission_json) {
+                    if (!duplicates.has(sub.id)) {
+                        const submission = new Submission(
+                            new Date(sub.epoch_second * 1000),
+                            submissionType.NA,  //no clue to get state
+                            sub.result === "AC" ? Result.AC :
+                                sub.result === "TLE" ? Result.TLE :
+                                sub.result === "MLE" ? Result.MLE :
+                                sub.result === "CE" ? Result.CE :
+                                sub.result === "RE" ? Result.RE :
+                                sub.result === "OLE" ? Result.OLE :
+                                sub.result === "WA" ? Result.WA : Result.IE,
+                            sub.language,
+                            sub.point,
+                            (sub.problem_id.split('_')[1]).toUpperCase()
+                        );
+                        submissions.push(submission);
+                        duplicates.add(sub.id);
+                    }
+                }
+                start_second = query_second;
+                query_second += interval_second;
             }
     
             return submissions;

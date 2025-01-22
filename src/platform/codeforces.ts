@@ -76,6 +76,7 @@ export class Codeforces extends Platform {
             const doc = new DOMParser().parseFromString(await contestSource, 'text/html');
 
             const rows = Array.from(doc.querySelectorAll("table")[5].querySelectorAll("tr")).reverse();
+            console.log(rows);
             for(const row of rows) {
                 let contest_name = '';
                 let date = new Date();
