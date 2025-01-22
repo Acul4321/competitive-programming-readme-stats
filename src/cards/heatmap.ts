@@ -8,7 +8,7 @@ export class Heatmap extends Card {
     private square_number: number = 364; //for the week before the year mark
     private day_of_the_week:number = -1; //1-7 for the extra days added on to the year
     private square_scale: number = .055;
-    private square_gap: number = this.width/266.67;
+    private square_gap: number = 3;
     private data_freq:Array<number> = []; //the number of contest participated or AC submissions on that day
     private colour_count: number = 5;//how many colours the palette will have
     private colour_palette:Map<number,string> = new Map<number,string>();
@@ -42,6 +42,7 @@ export class Heatmap extends Card {
             this.border_radius = 4.5;
         }
         
+        this.square_gap= this.width/266.67;
         this.day_of_the_week = new Date().getDay();//current day
         this.data_freq = this.calcDataFreq();
         this.colour_palette = this.createPalette(this.theme.text_color); // colour peram will be middle value with 3 above and below in tone
