@@ -58,7 +58,7 @@ export abstract class Card {
                 border-radius: ${this.border_radius}px;
             }
             #card-body {
-                margin: 20px;
+                margin: ${Math.min(this.width/20,20)}px;
                 width: ${this.width - 40}px;
                 height: ${this.height - 40}px;
                 display: flex;

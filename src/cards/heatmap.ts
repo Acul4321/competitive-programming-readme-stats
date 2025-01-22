@@ -8,7 +8,7 @@ export class Heatmap extends Card {
     private square_number: number = 364; //for the week before the year mark
     private day_of_the_week:number = -1; //1-7 for the extra days added on to the year
     private square_scale: number = .055;
-    private square_gap: number = 3;
+    private square_gap: number = this.width/266.67;
     private data_freq:Array<number> = []; //the number of contest participated or AC submissions on that day
     private colour_count: number = 5;//how many colours the palette will have
     private colour_palette:Map<number,string> = new Map<number,string>();
@@ -201,11 +201,11 @@ export class Heatmap extends Card {
         let squares:string = "";
         let translateX:number;
         let translateY:number;
-        const startingX:number = 20;
+        const startingX:number = this.width/50;
         const startingY:number = 0;
         for(let i=0;i<this.square_number;i++){ //weeks for majority of days
-            translateY = (i % 7) * ((this.height*this.square_scale) + this.square_gap);
-            translateX = Math.floor(i / 7) * ((this.height*this.square_scale) + this.square_gap);
+            translateY = (i % 7) * (((this.width/4)*this.square_scale) + this.square_gap);
+            translateX = Math.floor(i / 7) * (((this.width/4)*this.square_scale) + this.square_gap);
             squares+=`
             <div id="square" style="transform: translate(${translateX + startingX}px,${translateY + startingY}px);background-color:${this.getPaletteColour(this.data_freq[i])}"></div>
             `;
@@ -226,15 +226,15 @@ export class Heatmap extends Card {
         for(let i = 0;i < this.colour_palette.size+2;i++){ //+2 for labels at end and start
             if(i == 0) {
                 palette_showcase += `
-                    <div id="label" style="transform: translate(-${showcase_start-(i*15) + 30}px,-10px)">Less</div>
+                <div id="label" style="transform: translate(-${showcase_start-(i*this.width/50) + (this.width/27)}px,-${(this.height/40)*2}px)">Less</div>
                 `;
             } else if( i == this.colour_palette.size+1){
                 palette_showcase += `
-                    <div id="label" style="transform: translate(-${showcase_start-(i*15) + 15}px,-10px)">More</div>
+                    <div id="label" style="transform: translate(-${showcase_start-(i*(this.width/50)) + (this.width/41)}px,-${(this.height/40)*2}px)">More</div>
             `;   
             }
             palette_showcase += `
-            <div id="square" style="background-color:${this.colour_palette.get(i)};transform: translate(-${showcase_start-(i*15)}px,-5px)"></div>
+            <div id="square" style="background-color:${this.colour_palette.get(i)};transform: translate(-${showcase_start-(i*(this.width/50))}px,-${this.height/40}px)"></div>
             `;   
         }
 
@@ -248,7 +248,7 @@ export class Heatmap extends Card {
 
         for(let i=0;i<date_labels.length;i++){
             return_date += `
-                <div id="label" style="transform:translate(-5px,${(i*27)+10}px)">${date_labels[i]}</div>
+                <div id="label" style="transform:translate(-${this.width/90}px,${(i*(this.height/7.5))+this.height/20}px)">${date_labels[i]}</div>
             `;
         }
 
@@ -275,7 +275,7 @@ export class Heatmap extends Card {
                 currentMonth = monthIndex;
                 const translateX = Math.floor(index / 7) * ((this.height * this.square_scale) + this.square_gap);
                 return_month += `
-                    <div id="label" style="transform:translate(${translateX + 20}px,100px)">${month.get(monthIndex)}</div>
+                    <div id="label" style="transform:translate(${translateX + 20}px,${this.height-(this.height/2)}px)">${month.get(monthIndex)}</div>
                 `;
             }
         }
@@ -289,7 +289,7 @@ export class Heatmap extends Card {
                 color: #${this.theme.title_color};
                 font-size: ${this.height/10}px;
                 font-weight: 600;
-                margin-bottom: 10px;
+                margin-bottom: ${this.height/20}px;
             }
             .border {
                 height: 2px;
