@@ -52,6 +52,9 @@ export class Heatmap extends Card {
         
         //calculate empty square colour
         const bg_rgb = hexToRgb(this.theme.bg_color);
+        if(!bg_rgb.a){
+            bg_rgb.a = 1;
+        }
         const darker_bg_rgb: RGB = {
             r: bg_rgb.r * 2,
             g: bg_rgb.g * 2,

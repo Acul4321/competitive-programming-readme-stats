@@ -6,38 +6,81 @@ export type RGB = {
   r: number;
   g: number;
   b: number;
+  a?: number;  // Add optional alpha channel
 };
 
-export function hexToRgb(hex: string): RGB {
-  // Ensure the hex string is valid
-  const normalizedHex = hex.startsWith("#") ? hex.slice(1) : hex;
-  const hexRegex = /^(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-
-  if (!hexRegex.test(normalizedHex)) {
-    throw new Error("Invalid hex color string");
-  }
-
-  // Expand shorthand hex format (#abc -> #aabbcc)
-  const fullHex = normalizedHex.length === 3
-    ? normalizedHex.split("").map(char => char + char).join("")
-    : normalizedHex;
-
-  const r = parseInt(fullHex.slice(0, 2), 16);
-  const g = parseInt(fullHex.slice(2, 4), 16);
-  const b = parseInt(fullHex.slice(4, 6), 16);
-
-  return { r, g, b };
+function normalizeHexColor(hex: string): { hex: string, alpha?: number } {
+    // Remove # if present
+    hex = hex.replace(/^#/, '');
+    
+    let alpha: number | undefined;
+    
+    // Handle different formats
+    if (hex.length === 8) {
+        // 8 characters = RRGGBBAA
+        alpha = parseInt(hex.slice(6, 8), 16) / 255;
+        hex = hex.slice(0, 6);
+    } else if (hex.length === 4) {
+        // 4 characters = RGB[A]
+        const alphaChar = hex[3];
+        alpha = alphaChar ? parseInt(alphaChar + alphaChar, 16) / 255 : undefined;
+        hex = hex.slice(0, 3).split('').map(char => char + char).join('');
+    } else if (hex.length === 3) {
+        // 3 characters = RGB
+        hex = hex.split('').map(char => char + char).join('');
+    }
+    
+    return { hex, alpha };
 }
 
-export function rgbToHex({ r, g, b }: RGB): string {
-  if (
-    r < 0 || r > 255 ||
-    g < 0 || g > 255 ||
-    b < 0 || b > 255
-  ) {
-    throw new Error("RGB values must be between 0 and 255");
-  }
+export function hexToRgb(hex: string): RGB {
+    // Normalize the hex string
+    const { hex: normalizedHex, alpha } = normalizeHexColor(hex);
+    
+    // Validate the normalized hex
+    if (!/^[0-9a-fA-F]{6}$/.test(normalizedHex)) {
+        throw new Error("Invalid hex color string");
+    }
 
-  const toHex = (value: number) => value.toString(16).padStart(2, "0");
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    const r = parseInt(normalizedHex.slice(0, 2), 16);
+    const g = parseInt(normalizedHex.slice(2, 4), 16);
+    const b = parseInt(normalizedHex.slice(4, 6), 16);
+
+    return alpha !== undefined ? { r, g, b, a: alpha } : { r, g, b };
+}
+
+function normalizeColor(color: RGB): RGB {
+    let { r, g, b, a } = color;
+
+    // Find the maximum RGB value
+    const maxVal = Math.max(r, g, b);
+
+    // Scale values if the maximum is greater than 255
+    if (maxVal > 255) {
+        const scale = 255 / maxVal;
+        r = Math.round(r * scale);
+        g = Math.round(g * scale);
+        b = Math.round(b * scale);
+    } else {
+        // Ensure values are not negative
+        r = Math.max(0, Math.round(r));
+        g = Math.max(0, Math.round(g));
+        b = Math.max(0, Math.round(b));
+    }
+
+    // Normalize alpha to be between 0 and 1, or default to 1
+    if (a !== undefined) {
+        a = Math.max(0, Math.min(1, a));
+    }
+
+    return { r, g, b, a };
+}
+
+export function rgbToHex({ r, g, b, a }: RGB): string {
+    // Normalize the color values
+    const normalized = normalizeColor({ r, g, b, a });
+    
+    const toHex = (value: number) => Math.round(value).toString(16).padStart(2, "0");
+    const baseHex = `#${toHex(normalized.r)}${toHex(normalized.g)}${toHex(normalized.b)}`;
+    return normalized.a !== undefined ? `${baseHex}${toHex(Math.round(normalized.a * 255))}` : baseHex;
 }
