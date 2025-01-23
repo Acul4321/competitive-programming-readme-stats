@@ -91,8 +91,8 @@ export class Atcoder extends Platform {
             
             // limitation with api(limits submittions retrivible at a time)
             // go through atcoders start year to the current year monthly
-            const interval_second: number = 2629743*4; //4 months
-            const end_second:number = Math.floor(((new Date().getTime()) / 1000)+100);
+            let interval_second: number = 2629743;
+            let end_second:number = Math.floor(((new Date().getTime()) / 1000)+100);
             let start_second: number = await (await fetch("https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=" + username + "&from_second=0"))
                 .json()
                 .then(data => data[0]?.epoch_second ?? 0);
@@ -102,24 +102,21 @@ export class Atcoder extends Platform {
                 const submission_json = await contentSource.json();
                 
                 for (const sub of submission_json) {
-                    if (!duplicates.has(sub.id)) {
-                        const submission = new Submission(
-                            new Date(sub.epoch_second * 1000),
-                            submissionType.NA,  //no clue to get state
-                            sub.result === "AC" ? Result.AC :
-                                sub.result === "TLE" ? Result.TLE :
-                                sub.result === "MLE" ? Result.MLE :
-                                sub.result === "CE" ? Result.CE :
-                                sub.result === "RE" ? Result.RE :
-                                sub.result === "OLE" ? Result.OLE :
-                                sub.result === "WA" ? Result.WA : Result.IE,
-                            sub.language,
-                            sub.point,
-                            (sub.problem_id.split('_')[1]).toUpperCase()
-                        );
-                        submissions.push(submission);
-                        duplicates.add(sub.id);
-                    }
+                    const submission = new Submission(
+                        new Date(sub.epoch_second * 1000),
+                        submissionType.NA,  //no clue to get state
+                        sub.result === "AC" ? Result.AC :
+                            sub.result === "TLE" ? Result.TLE :
+                            sub.result === "MLE" ? Result.MLE :
+                            sub.result === "CE" ? Result.CE :
+                            sub.result === "RE" ? Result.RE :
+                            sub.result === "OLE" ? Result.OLE :
+                            sub.result === "WA" ? Result.WA : Result.IE,
+                        sub.language,
+                        sub.point,
+                        (sub.problem_id.split('_')[1]).toUpperCase()
+                    );
+                    submissions.push(submission);
                 }
                 start_second = query_second;
                 query_second += interval_second;
