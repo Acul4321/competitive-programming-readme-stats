@@ -1,0 +1,37 @@
+name: Deploy
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+    test:
+      uses: ./.github/workflows/test.yml
+
+    build:
+        runs-on: ubuntu-latest
+        needs: test
+
+        permissions:
+          id-token: write # Needed for auth with Deno Deploy
+          contents: read # Needed to clone the repository
+
+        steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v4
+
+        - name: Setup Deno environment
+          uses: denoland/setup-deno@v2
+          with:
+            deno-version: v2.1.4
+  
+        - name: Check site
+          run: deno check api/main.ts
+
+        - name: Upload to Deno Deploy
+          uses: denoland/deployctl@v1
+          with:
+            project: "cp-readme-stats"
+            entrypoint: "api/main.ts"
+            root: "."
