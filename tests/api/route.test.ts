@@ -2,6 +2,7 @@ import { assertNotEquals,assert } from "@std/assert";
 import { testing } from "@oak/oak";
 import { router } from "../../api/main.ts";
 
+//tests the base route of the application router
 Deno.test(async function testAppListening() {
     const ctx = testing.createMockContext({
       path: "/",
