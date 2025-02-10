@@ -20,7 +20,7 @@ export class Theme {
   }
 }
 
-export function getTheme(name : string) : Theme{
+export function getTheme(name : string | undefined) : Theme{
   const theme : Theme = themes[name as keyof typeof themes] ?? themes["default"];
 
   return new Theme(
