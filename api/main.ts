@@ -2,7 +2,7 @@ import { Application, Router } from "@oak/oak";
 import { oakCors } from "@tajpouria/cors";
 import "jsr:@std/dotenv/load";
 
-import { getTheme,Theme } from "../themes/themes.ts";
+import { getTheme } from "../themes/themes.ts";
 
 /*
 // Variables
@@ -23,12 +23,14 @@ router.get("/:platform/:type/:username", async (ctx) => {
     // ctx.response.type = "image/svg+xml";  // Set content type for SVG
 
     const perams = optionalQueryParams(ctx.request.url); // query perameter setup
-
+    throw new Error("");
+    
     ctx.response.body = "W";
 
   } catch (e) {
     console.error("Unhandled error:", e);
     ctx.response.status = 500;
+    ctx.response.headers.set("error", "main");
     ctx.response.body = "Internal Server Error";
   }
 });
