@@ -6,6 +6,13 @@ class TestCard extends Card {
     public override readonly default_width: number = 200;
     public override readonly default_height: number = 100;
     public override readonly default_border_radius: number = 10;
+
+    protected renderTitle(): string {
+        return "Test Card";
+    }
+    protected renderBody(): string {
+        return "Test Card Body";
+    }
 }
 
 // tests Card init functionality
