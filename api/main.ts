@@ -1,4 +1,4 @@
-import { Application, Router } from "@oak/oak";
+import { Application, Context, Router } from "@oak/oak";
 import { oakCors } from "@tajpouria/cors";
 import "jsr:@std/dotenv/load";
 
@@ -8,6 +8,8 @@ import { Card } from "../src/cards/card.ts";
 import { ErrorCard } from "../src/cards/error.ts";
 
 import { Platform } from "../src/platforms/platform.ts";
+import { Atcoder } from "../src/platforms/atcoder.ts";
+import { Codeforces } from "../src/platforms/codeforces.ts";
 
 
 /*
@@ -28,7 +30,7 @@ router.get("/:platform/:type/:username", async (ctx) => {
   try {
     const params = optionalQueryParams(ctx.request.url); // query perameter setup
     
-    const platform = validatePlatform(ctx.params.platform); // init platform
+    const platform : Platform = await validatePlatform(ctx.params.platform, ctx.params.username); // init platform
 
     const card = validateCardType(ctx.params.type); // init card type
 
@@ -86,20 +88,23 @@ export function optionalQueryParams(url: URL) {
   };
 }
 
-export function validatePlatform(platform: string): Platform{
+export async function validatePlatform(platform: string, username: string): Promise<Platform> {
+    let platformInstance: Platform;
     switch(platform) {
-    case "atcoder": {
-    throw new Error("atcoder platform not yet Implemented");
-      // return new Atcoder();
+        case "atcoder": {
+            platformInstance = new Atcoder(username);
+            break;
+        }
+        case "codeforces": {
+            platformInstance = new Codeforces(username);
+            break;
+        }
+        default: {
+            throw new Error("Platform not supported");
+        }
     }
-    case "codeforces": {
-      throw new Error("codeforces platform not yet Implemented");
-      // return new Codeforces();
-    }
-    default: {
-      throw new Error("Platform not supported");
-    }
-  }
+    await platformInstance.initialize(username);
+    return platformInstance;
 }
 
 export function validateCardType(type: string): Card {

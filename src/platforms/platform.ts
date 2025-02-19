@@ -1,3 +1,5 @@
+import { platform } from "node:os";
+
 export abstract class Platform {
     protected platform_url: string;
     public profile: Profile = new Profile('');
@@ -5,9 +7,14 @@ export abstract class Platform {
     public abstract platform_name: string;
     protected abstract platform_rating_bands: Map<number, Record<string, string>>;
 
-    constructor(url: string) {
+    constructor(url: string, username: string) {
         this.platform_url = url;
     }
+
+    public async initialize(username: string): Promise<void> {
+        this.profile = await this.fetchProfile(username);
+    }
+
     getUserURL(username: string): string {
         return this.platform_url + username;
     }

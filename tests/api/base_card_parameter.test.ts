@@ -1,7 +1,6 @@
-import { assertNotEquals,assert, assertEquals } from "@std/assert";
-import { testing } from "@oak/oak";
-import { router,optionalQueryParams } from "../../api/main.ts";
-import { Theme,getTheme } from "../../themes/themes.ts";
+import { assertEquals } from "@std/assert";
+import { optionalQueryParams } from "../../api/main.ts";
+import { getTheme } from "../../themes/themes.ts";
 
 /*
 // tests if the api/main.ts optionalQueryParams() parses correctly
