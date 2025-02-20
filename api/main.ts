@@ -2,7 +2,7 @@ import { Application, Context, Router } from "@oak/oak";
 import { oakCors } from "@tajpouria/cors";
 import "jsr:@std/dotenv/load";
 
-import { getTheme } from "../themes/themes.ts";
+import { getTheme, Theme } from "../themes/themes.ts";
 
 import { Card } from "../src/cards/card.ts";
 import { ErrorCard } from "../src/cards/error.ts";
@@ -10,6 +10,7 @@ import { ErrorCard } from "../src/cards/error.ts";
 import { Platform } from "../src/platforms/platform.ts";
 import { Atcoder } from "../src/platforms/atcoder.ts";
 import { Codeforces } from "../src/platforms/codeforces.ts";
+import { StatsCard } from "../src/cards/stats.ts";
 
 
 /*
@@ -32,7 +33,7 @@ router.get("/:platform/:type/:username", async (ctx) => {
     
     const platform : Platform = await validatePlatform(ctx.params.platform, ctx.params.username); // init platform
 
-    const card = validateCardType(ctx.params.type); // init card type
+    const card = validateCardType(ctx.params.type, platform, params); // init card type
 
     ctx.response.body = card.render(); // render card
 
@@ -84,7 +85,11 @@ export function optionalQueryParams(url: URL) {
   // set optional perameters
   width : queryParam.get('width') !== undefined ? parseInt(queryParam.get('width')!) : undefined,
   height : queryParam.get('height') !== undefined ? parseInt(queryParam.get('height')!) : undefined,
-  border_radius : queryParam.get('border_radius') !== undefined ? parseInt(queryParam.get('border_radius')!) : undefined
+  border_radius : queryParam.get('border_radius') !== undefined ? parseInt(queryParam.get('border_radius')!) : undefined,
+
+  //Card
+  //Stats Optional perameters
+  hide : queryParam.get('hide') !== undefined ? queryParam.get('hide')! : undefined
   };
 }
 
@@ -107,19 +112,16 @@ export async function validatePlatform(platform: string, username: string): Prom
     return platformInstance;
 }
 
-export function validateCardType(type: string): Card {
+export function validateCardType(type: string, platform : Platform, params: { show_icons: boolean, hide_border: boolean, use_rank_colour: boolean, theme: Theme, width?: number, height?: number, border_radius?: number, hide?: string }): Card {
   switch(type) {
     case "stats": {
-      throw new Error("Stat Card Type not yet Implemented");
-      // return new Stats(
-      //   platform,
-      //   use_rank_colour,
-      //   theme, 
-      //   show_icons,
-      //   hide_border, 
-      //   width, 
-      //   height, 
-      //   border_radius);
+      return new StatsCard(
+        params.show_icons,
+        params.hide_border,
+        params.use_rank_colour,
+        params.theme, 
+        platform,
+        params);
     }
     case "heatmap": {
       throw new Error("Heatmap Card Type not yet Implemented");

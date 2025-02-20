@@ -1,5 +1,3 @@
-import { platform } from "node:os";
-
 export abstract class Platform {
     protected platform_url: string;
     public profile: Profile = new Profile('');

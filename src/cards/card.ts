@@ -1,9 +1,9 @@
 import { Theme } from "../../themes/themes.ts";
 
 export abstract class Card {
-    public abstract readonly default_width: number;
-    public abstract readonly default_height: number;
-    public abstract readonly default_border_radius: number;
+    abstract readonly default_width: number;
+    abstract readonly default_height: number;
+    abstract readonly default_border_radius: number;
 
     public width: number | undefined;
     public height: number | undefined;
@@ -34,6 +34,12 @@ export abstract class Card {
         this.setBorderRadius(this.border_radius);
     }
 
+    protected setBorderRadius(border_radius: number | undefined = undefined): void {
+        if(this.border_radius === undefined){
+            this.border_radius = this.default_border_radius;
+        }
+    }
+
     protected calcCardDimensions(width: number | undefined = undefined, height: number | undefined = undefined): void {
         const aspectRatio : number = this.default_width / this.default_height;
 
@@ -51,12 +57,10 @@ export abstract class Card {
             this.height = height;
         }
     }
-
-    protected setBorderRadius(border_radius: number | undefined = undefined): void {
-        if(this.border_radius === undefined){
-            this.border_radius = this.default_border_radius;
-        }
+    protected calcCardScale() : string{
+        return `${this.width! / this.default_width},${this.height! / this.default_height}`;
     }
+
 
     protected abstract renderTitle(): string;
     protected abstract renderBody(): string;
@@ -78,17 +82,19 @@ export abstract class Card {
             #svg-body {
                 margin: 0;
                 font-family: Segoe UI;
-                color: #${this.theme.text_color};
+                color: ${this.theme.text_color};
             }
             #card {
                 width: ${this.width - 2}px;
                 height: ${this.height - 2}px;
+                transform: scale(${this.calcCardScale()}); 
+                transform-origin: 0 0;"
                 
                 display: flex;
                 position: relative;
-                background-color: #${this.theme.bg_color};
+                background-color: ${this.theme.bg_color};
     
-                border: ${this.hide_border === false ? 1 : 0}px solid rgb(228, 226, 226);
+                border: ${this.hide_border === false ? 1 : 0}px solid ${this.theme.border_color};
                 border-radius: ${this.border_radius}px;
             }
             #card-body {
@@ -109,15 +115,15 @@ export abstract class Card {
         
         return `
             <svg
-            viewBox="0 0 ${this.width} ${this.height}"
-            width="${this.width}"
-            height="${this.height}"
+            viewBox="0 ${this.width} ${this.height}"
+            width="100%"
+            height="100%"
             preserveAspectRatio="xMidYMid meet"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             >
 
-            <foreignObject x="0" y="0" width="${this.width}" height="${this.height}" overflow="auto">
+            <foreignObject x="0" y="0" width="100%" height="100%" overflow="auto">
             <body id="svg-body" xmlns="http://www.w3.org/1999/xhtml">
                 <div id="card">
                 <div id="card-body">
