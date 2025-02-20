@@ -124,16 +124,15 @@ export function validateCardType(type: string, platform : Platform, params: { sh
         params);
     }
     case "heatmap": {
-      throw new Error("Heatmap Card Type not yet Implemented");
-    //   return new Heatmap(
-    //     platform,
-    //     data_type,
-    //     theme,
-    //     show_icons,
-    //     hide_border,
-    //     width,
-    //     height,
-    //     border_radius);
+      return new Heatmap(
+        platform,
+        data_type,
+        theme,
+        show_icons,
+        hide_border,
+        width,
+        height,
+        border_radius);
     }
     case "graph": {
       throw new Error("Graph Card Type not yet Implemented");
