@@ -17,6 +17,10 @@ export abstract class Platform {
         return this.platform_url + username;
     }
 
+    public getPlatformBands(): Map<number, Record<string, string>>{
+        return this.platform_rating_bands;
+    }
+
     //rank colour
     getRankColour(rating: number): string {
         const bands = Array.from(this.platform_rating_bands.keys()).sort((a, b) => a - b);
@@ -26,17 +30,6 @@ export abstract class Platform {
             }
         }
         return this.platform_rating_bands.get(bands[bands.length-1])?.colour ?? "#000000"; // If rank is higher than the highest
-    }
-
-    // Stats rank ring degrees calculation
-    calcRatingBandProgress(rating: number): number{ //returns the progress(0-1) from the previous band to the next
-        const bands = Array.from(this.platform_rating_bands.keys()).sort((a, b) => a - b);
-        for (let i = 0; i < bands.length - 1; i++) {
-            if (rating >= bands[i] && rating < bands[i + 1]) {
-                return (rating - bands[i]) / (bands[i + 1] - bands[i]);
-            }
-        }
-        return 1; // If rank is higher than the highest band
     }
 
     async getSourceHTML(username: string): Promise<string> {
