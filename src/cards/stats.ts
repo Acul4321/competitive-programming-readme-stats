@@ -110,7 +110,7 @@ export class StatsCard extends Card {
         return `
             #title {
                 color: ${this.theme.title_color};
-                font-size: ${this.width!/20}px;
+                font-size: 10px;
                 font-weight: 600;
                 margin-bottom: 10px;
             }
@@ -127,19 +127,14 @@ export class StatsCard extends Card {
                 justify-content: center;
                 align-items: center;
             }
-            .border {
-                height: 2px;
-                background-color: rgb(228, 226, 226);
-                margin: 5px 20px 0px;
-            }
 
             /* Stats */
             .stats-row {
-                height: ${this.height!/7}px;
+                height: 12px;
                 display: flex;
             }
             .stats-cell {
-                font-size: ${this.width!/30}px;
+                font-size: 6px;
                 font-weight: 700;
                 display: flex;
                 margin: auto auto auto 0px;
@@ -149,15 +144,15 @@ export class StatsCard extends Card {
                 margin: auto 0px auto auto;
             }
             .icon {
-                width: ${this.width!/25}px;
-                height: ${this.height!/12}px;
+                width: 6px;
+                height: 6px;
                 margin: auto 5px auto 0px;
                 color: ${this.theme.icon_color};
             }
 
             .container {
-                width: ${this.width!/5}px;
-                height: ${this.height!/2.2}px;
+                width: 55px;
+                height: 55px;
                 text-align: center;
                 display: relative;
                 justify-content: center;
@@ -166,16 +161,12 @@ export class StatsCard extends Card {
             }
             .circle {
                 width: 100%;
-                height: 100%;
+                aspect-ratio: 1 / 1;
                 border-radius: 50%;
                 display: absolute;
                 justify-content: center;
                 align-items: center;
-                
 
-                animation-name: conic-gradient;
-                animation-duration: 0.8s;
-                animation-fill-mode: forwards;
                 background-image: radial-gradient(${this.theme.bg_color} 60%, transparent 61%), conic-gradient(${this.use_rank_colour ? this.rank_colour : this.theme.title_color} ${this.rank_deg}deg, ${this.use_rank_colour ? this.rank_colour : this.theme.title_color}33 ${this.rank_deg}deg 360deg);
                 mask-image: radial-gradient(
                     circle, 
@@ -187,20 +178,17 @@ export class StatsCard extends Card {
             .rating {
                 color: ${this.theme.text_color};
                 display: absolute;
-                transform: translateY(-130%);
+                transform: translateY(-49px);
             }
             .rating-label {
-                font-size: ${this.width!/30}px;
-                font-weight: 600;
+                font-size: 8px;
+                font-weight: 500;
             }
             .rating-text {
-                font-size: ${this.width!/18}px;
+                font-size: 15px;
                 font-weight: 800;
             }
 
-            @keyframes conic-gradient {
-                {"".join(keyframes)}
-            }
         `;
     }
 }

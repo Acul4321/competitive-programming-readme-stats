@@ -83,12 +83,11 @@ export abstract class Card {
                 margin: 0;
                 font-family: Segoe UI;
                 color: ${this.theme.text_color};
+                
             }
             #card {
                 width: ${this.width - 2}px;
                 height: ${this.height - 2}px;
-                transform: scale(${this.calcCardScale()}); 
-                transform-origin: 0 0;"
                 
                 display: flex;
                 position: relative;
@@ -98,17 +97,19 @@ export abstract class Card {
                 border-radius: ${this.border_radius}px;
             }
             #card-body {
-                margin: ${Math.min(this.width/20,20)}px;
-                width: ${this.width - 40}px;
-                height: ${this.height - 40}px;
+                padding: ${(this.width >= 600) ? '1%' : '2%'};
                 display: flex;
                 flex-direction: column;
+                width: calc(${this.default_width}px - ${(this.width >= 600) ? '2%' : '4%'});
+                height: calc(${this.default_height}px - ${(this.width >= 600) ? '4%' : '8%'});
+                transform: scale(${this.calcCardScale()});
+                transform-origin: top left;
             }
             #title-container {
-                height: auto;
+                height: 20%;
             }
             #body-container {
-                height: calc(100% - 35px);
+                height: 80%;
             }
             ${this.Style()}
         `;    
