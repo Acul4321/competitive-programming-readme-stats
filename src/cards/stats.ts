@@ -29,7 +29,7 @@ export class StatsCard extends Card {
         this.platform = platform;
         
         this.rank_colour = this.platform.getRankColour(this.platform.profile.getRating());
-        this.rank_deg = 360 * this.platform.calcRatingBandProgress(this.platform.profile.getRating());
+        this.rank_deg = 360 * this.calcRatingBandProgress(this.platform.profile.getRating());
 
         //parse hide
         if (params && params.hide) {
@@ -190,5 +190,17 @@ export class StatsCard extends Card {
             }
 
         `;
+    }
+
+    // Stats rank ring degrees calculation
+    calcRatingBandProgress(rating: number): number{ //returns the progress(0-1) from the previous band to the next
+        if(rating < 0) rating = 0;
+        const bands = Array.from(this.platform.getPlatformBands().keys()).sort((a, b) => a - b);
+        for (let i = 0; i < bands.length - 1; i++) {
+            if (rating >= bands[i] && rating < bands[i + 1]) {
+                return (rating - bands[i]) / (bands[i + 1] - bands[i]);
+            }
+        }
+        return 1; // If rank is higher than the highest band
     }
 }
