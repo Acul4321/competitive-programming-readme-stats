@@ -151,8 +151,8 @@ export class StatsCard extends Card {
             }
 
             .container {
-                width: 55px;
-                height: 55px;
+                width: 100%;
+                aspect-ratio: 1 / 1;
                 text-align: center;
                 display: relative;
                 justify-content: center;
@@ -178,7 +178,7 @@ export class StatsCard extends Card {
             .rating {
                 color: ${this.theme.text_color};
                 display: absolute;
-                transform: translateY(-49px);
+                transform: translateY(-125%);
             }
             .rating-label {
                 font-size: 8px;
