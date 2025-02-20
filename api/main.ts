@@ -5,12 +5,13 @@ import "jsr:@std/dotenv/load";
 import { getTheme, Theme } from "../themes/themes.ts";
 
 import { Card } from "../src/cards/card.ts";
+import { StatsCard } from "../src/cards/stats.ts";
+import { HeatmapCard } from "../src/cards/heatmap.ts";
 import { ErrorCard } from "../src/cards/error.ts";
 
 import { Platform } from "../src/platforms/platform.ts";
 import { Atcoder } from "../src/platforms/atcoder.ts";
 import { Codeforces } from "../src/platforms/codeforces.ts";
-import { StatsCard } from "../src/cards/stats.ts";
 
 
 /*
@@ -89,7 +90,8 @@ export function optionalQueryParams(url: URL) {
 
   //Card
   //Stats Optional perameters
-  hide : queryParam.get('hide') !== undefined ? queryParam.get('hide')! : undefined
+  hide : queryParam.get('hide') !== undefined ? queryParam.get('hide')! : undefined,
+  data_type : queryParam.get('data_type') !== undefined ? queryParam.get('data_type')! : undefined
   };
 }
 
@@ -112,7 +114,7 @@ export async function validatePlatform(platform: string, username: string): Prom
     return platformInstance;
 }
 
-export function validateCardType(type: string, platform : Platform, params: { show_icons: boolean, hide_border: boolean, use_rank_colour: boolean, theme: Theme, width?: number, height?: number, border_radius?: number, hide?: string }): Card {
+export function validateCardType(type: string, platform : Platform, params: { show_icons: boolean, hide_border: boolean, use_rank_colour: boolean, theme: Theme, width?: number, height?: number, border_radius?: number, hide?: string, data_type?: string }): Card {
   switch(type) {
     case "stats": {
       return new StatsCard(
@@ -124,15 +126,13 @@ export function validateCardType(type: string, platform : Platform, params: { sh
         params);
     }
     case "heatmap": {
-      return new Heatmap(
+      return new HeatmapCard(
+        params.show_icons,
+        params.hide_border,
+        params.use_rank_colour,
+        params.theme, 
         platform,
-        data_type,
-        theme,
-        show_icons,
-        hide_border,
-        width,
-        height,
-        border_radius);
+        params);
     }
     case "graph": {
       throw new Error("Graph Card Type not yet Implemented");

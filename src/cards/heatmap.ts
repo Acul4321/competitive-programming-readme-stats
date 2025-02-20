@@ -3,6 +3,10 @@ import { Result,Platform } from "../platforms/platform.ts";
 import { Card } from "./card.ts";
 
 export class HeatmapCard extends Card {
+    override readonly default_width: number = 400;
+    override readonly default_height: number = 100;
+    override readonly default_border_radius: number = 10;
+
     private square_number: number = 364; //for the week before the year mark
     private day_of_the_week:number = -1; //1-7 for the extra days added on to the year
     private square_scale: number = .055;
@@ -11,33 +15,24 @@ export class HeatmapCard extends Card {
     private colour_count: number = 5;//how many colours the palette will have
     private colour_palette:Map<number,string> = new Map<number,string>();
 
-    protected default_width: number = 800;
-    protected default_height: number = 200;
+
+    public platform : Platform;
+    public data_type : string = "submission"; //contest participation,submissions
 
     constructor(
-        private platform: Platform,
-        private data_type: string = "submission", //contest participation,submissions
-        theme:Theme = themes["default"],
-        show_icons: boolean = true,
-        hide_border: boolean = false,
-        width: number = 800,
-        height: number = 200,
-        border_radius: number = 4.5
+        show_icons: boolean,
+        hide_border: boolean,
+        use_rank_colour: boolean,
+        theme: Theme,
+        platform: Platform,
+        params?: { width? : number, height? : number, border_radius? : number, data_type? : string}
     ) {
-        super(width, height, theme,show_icons,border_radius, hide_border);
+        super(show_icons, hide_border, use_rank_colour, theme, params);
+        this.platform = platform;
 
-        //TODO: optimise to be in main Card class
-        if (width == -1 && height == -1) {
-            this.width = this.default_width;
-            this.height = this.default_height;
-        } else if (width && height == -1) {
-            this.height = width * (this.default_height/this.default_width);
-        } else if (height && width == -1) {
-            this.width = height * (this.default_width/this.default_height);
-        }
-
-        if(border_radius == -1) {
-            this.border_radius = 4.5;
+        //parse data_type
+        if(params && params.data_type){
+            this.data_type = params.data_type;
         }
         
         this.square_gap= this.width/266.67;
