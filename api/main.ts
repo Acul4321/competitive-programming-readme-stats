@@ -83,9 +83,9 @@ export function optionalQueryParams(url: URL) {
   use_rank_colour : queryParam.get('use_rank_colour') === 'true' ? true : false,
   theme : getTheme(queryParam.get('theme')),
 
-  // set optional perameters
-  width : queryParam.get('width') !== undefined ? parseInt(queryParam.get('width')!) : undefined,
-  height : queryParam.get('height') !== undefined ? parseInt(queryParam.get('height')!) : undefined,
+  // set optional perameters (changing width & height has been disabled)
+  // width : queryParam.get('width') !== undefined ? parseInt(queryParam.get('width')!) : undefined,
+  // height : queryParam.get('height') !== undefined ? parseInt(queryParam.get('height')!) : undefined,
   border_radius : queryParam.get('border_radius') !== undefined ? parseInt(queryParam.get('border_radius')!) : undefined,
 
   //Card
@@ -114,7 +114,7 @@ export async function validatePlatform(platform: string, username: string): Prom
     return platformInstance;
 }
 
-export function validateCardType(type: string, platform : Platform, params: { show_icons: boolean, hide_border: boolean, use_rank_colour: boolean, theme: Theme, width?: number, height?: number, border_radius?: number, hide?: string, data_type?: string }): Card {
+export function validateCardType(type: string, platform : Platform, params: { show_icons: boolean, hide_border: boolean, use_rank_colour: boolean, theme: Theme, border_radius?: number, hide?: string, data_type?: string }): Card {
   switch(type) {
     case "stats": {
       return new StatsCard(
