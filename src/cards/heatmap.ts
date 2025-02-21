@@ -1,5 +1,6 @@
-import { getTheme,Theme } from "../../themes/themes.ts";
+import { Theme } from "../../themes/themes.ts";
 import { Result,Platform } from "../platforms/platform.ts";
+import { rgbToHex,hexToRgb, RGB } from "../utils.ts";
 import { Card } from "./card.ts";
 
 export class HeatmapCard extends Card {
@@ -35,7 +36,7 @@ export class HeatmapCard extends Card {
             this.data_type = params.data_type;
         }
         
-        this.square_gap= this.width/266.67;
+        this.square_gap= 1.5;
         this.day_of_the_week = new Date().getDay();//current day
         this.data_freq = this.calcDataFreq();
         this.colour_palette = this.createPalette(this.theme.text_color); // colour peram will be middle value with 3 above and below in tone
@@ -195,18 +196,18 @@ export class HeatmapCard extends Card {
         let squares:string = "";
         let translateX:number;
         let translateY:number;
-        const startingX:number = this.width/50;
+        const startingX:number = this.width!/50;
         const startingY:number = 0;
         for(let i=0;i<this.square_number;i++){ //weeks for majority of days
-            translateY = (i % 7) * (((this.width/4)*this.square_scale) + this.square_gap);
-            translateX = Math.floor(i / 7) * (((this.width/4)*this.square_scale) + this.square_gap);
+            translateY = (i % 7) * (((this.width!/4)*this.square_scale) + this.square_gap);
+            translateX = Math.floor(i / 7) * (((this.width!/4)*this.square_scale) + this.square_gap);
             squares+=`
             <div id="square" style="transform: translate(${translateX + startingX}px,${translateY + startingY}px);background-color:${this.getPaletteColour(this.data_freq[i])}"></div>
             `;
         }
         for(let i=0;i<this.day_of_the_week;i++){ //days of current week at the end
-            translateY = (i % 7) * ((this.height*this.square_scale) + this.square_gap);
-            translateX = Math.floor((i + this.square_number) / 7) * ((this.height*this.square_scale) + this.square_gap);
+            translateY = (i % 7) * ((this.height!*this.square_scale) + this.square_gap);
+            translateX = Math.floor((i + this.square_number) / 7) * ((this.height!*this.square_scale) + this.square_gap);
             squares+=`
             <div id="square" style="transform: translate(${translateX + startingX}px,${translateY + startingY}px);background-color:${this.getPaletteColour(this.data_freq[i])}"></div>
             `;
@@ -216,19 +217,19 @@ export class HeatmapCard extends Card {
 
     displayShowcase(): string{
         let palette_showcase : string = "";
-        const showcase_start: number = this.width/5;
+        const showcase_start: number = this.width!/5;
         for(let i = 0;i < this.colour_palette.size+2;i++){ //+2 for labels at end and start
             if(i == 0) {
                 palette_showcase += `
-                <div id="label" style="transform: translate(-${showcase_start-(i*this.width/50) + (this.width/27)}px,-${(this.height/40)*2}px)">Less</div>
+                <div id="label" style="transform: translate(-${showcase_start-(i*this.width!/50) + (this.width!/27)}px,-${(this.height!/40)*2}px)">Less</div>
                 `;
             } else if( i == this.colour_palette.size+1){
                 palette_showcase += `
-                    <div id="label" style="transform: translate(-${showcase_start-(i*(this.width/50)) + (this.width/41)}px,-${(this.height/40)*2}px)">More</div>
+                    <div id="label" style="transform: translate(-${showcase_start-(i*(this.width!/50)) + (this.width!/41)}px,-${(this.height!/40)*2}px)">More</div>
             `;   
             }
             palette_showcase += `
-            <div id="square" style="background-color:${this.colour_palette.get(i)};transform: translate(-${showcase_start-(i*(this.width/50))}px,-${this.height/40}px)"></div>
+            <div id="square" style="background-color:${this.colour_palette.get(i)};transform: translate(-${showcase_start-(i*(this.width!/50))}px,-${this.height!/40}px)"></div>
             `;   
         }
 
@@ -242,7 +243,7 @@ export class HeatmapCard extends Card {
 
         for(let i=0;i<date_labels.length;i++){
             return_date += `
-                <div id="label" style="transform:translate(-${this.width/90}px,${(i*(this.height/7.5))+this.height/20}px)">${date_labels[i]}</div>
+                <div id="label" style="transform:translate(-${this.width!/90}px,${(i*(this.height!/7.5))+this.height!/20}px)">${date_labels[i]}</div>
             `;
         }
 
@@ -267,9 +268,9 @@ export class HeatmapCard extends Card {
             const monthIndex = day.getMonth();
             if (monthIndex !== currentMonth && day.getDate() <= 7) {
                 currentMonth = monthIndex;
-                const translateX = Math.floor(index / 7) * ((this.height * this.square_scale) + this.square_gap);
+                const translateX = Math.floor(index / 7) * ((this.height! * this.square_scale) + this.square_gap);
                 return_month += `
-                    <div id="label" style="transform:translate(${translateX + 20}px,${this.height-(this.height/2)}px)">${month.get(monthIndex)}</div>
+                    <div id="label" style="transform:translate(${translateX + 20}px,${this.height!-(this.height!/2)}px)">${month.get(monthIndex)}</div>
                 `;
             }
         }
@@ -281,9 +282,9 @@ export class HeatmapCard extends Card {
         return `
             #title {
                 color: #${this.theme.title_color};
-                font-size: ${this.height/10}px;
+                font-size: ${this.height!/10}px;
                 font-weight: 600;
-                margin-bottom: ${this.height/20}px;
+                margin-bottom: ${this.height!/20}px;
             }
             .border {
                 height: 2px;
@@ -322,8 +323,8 @@ export class HeatmapCard extends Card {
             }
 
             #square {
-                width: ${this.height*this.square_scale}px;
-                height: ${this.height*this.square_scale}px;
+                width: ${this.height!*this.square_scale}px;
+                height: ${this.height!*this.square_scale}px;
                 margin-right: 5px; /* Adds right adjustment offset */
                 position: absolute /* stack Above Mult adjust
             }
@@ -339,7 +340,7 @@ export class HeatmapCard extends Card {
             }
             
             #label { 
-                font-size: ${this.height/15}px;
+                font-size: ${this.height!/15}px;
                 position: absolute;
             }
                 `;
