@@ -116,7 +116,7 @@ export abstract class Card {
         
         return `
             <svg
-            viewBox="0 ${this.width} ${this.height}"
+            viewBox="0 0 ${this.width} ${this.height}"
             width="100%"
             height="100%"
             preserveAspectRatio="xMidYMid meet"
@@ -124,7 +124,7 @@ export abstract class Card {
             xmlns="http://www.w3.org/2000/svg"
             >
 
-            <foreignObject x="0" y="0" width="100%" height="100%" overflow="auto">
+            <foreignObject x="0" y="0" width="100%" height="100%" overflow="hidden">
             <body id="svg-body" xmlns="http://www.w3.org/1999/xhtml">
                 <div id="card">
                 <div id="card-body">

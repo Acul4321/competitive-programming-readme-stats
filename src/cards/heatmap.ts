@@ -36,7 +36,7 @@ export class HeatmapCard extends Card {
             this.data_type = params.data_type;
         }
         
-        this.square_gap= 1.5;
+        this.square_gap = 1.5;
         this.day_of_the_week = new Date().getDay();//current day
         this.data_freq = this.calcDataFreq();
         this.colour_palette = this.createPalette(this.theme.text_color); // colour peram will be middle value with 3 above and below in tone
@@ -221,7 +221,7 @@ export class HeatmapCard extends Card {
         for(let i = 0;i < this.colour_palette.size+2;i++){ //+2 for labels at end and start
             if(i == 0) {
                 palette_showcase += `
-                <div id="label" style="transform: translate(-${showcase_start-(i*this.width!/50) + (this.width!/27)}px,-${(this.height!/40)*2}px)">Less</div>
+                <div id="label" style="transform: translate(-760%,-${(this.height!/40)*2}px)">Less</div>
                 `;
             } else if( i == this.colour_palette.size+1){
                 palette_showcase += `
